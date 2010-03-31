@@ -519,6 +519,14 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 	private $driver = 'mysqli';
 	
 	/**
+	 * @brief Internal use.
+	 * 
+	 * @see setAutoCommit()
+	 * @see getAutoCommit()
+	 */
+	private $autoCommit = true;
+	
+	/**
 	 * @brief Connect to a MySQL database.
 	 * 
 	 * Database connections are made with a URI like;
@@ -886,13 +894,14 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			             'setLocalInfileHandler', 'SQLState', 'getStatus',
 			             'getThreadID', 'isThreadSafe', 'getWarningCount',
 			             'engine', 'eraseTable', 'truncateTable', 'update',
-			             'delete');
+			             'delete', 'getAutoCommit');
 			
 		return array('query', 'execute', 'insert', 'selectDatabase',
 		             'getTableNames', 'tableExists', 'getDatabaseNames',
 		             'getSchemaNames', 'isConnected', 'disconnect',
 		             'getLastInsertID', 'ping', 'escapeString', 'engine',
-		             'eraseTable', 'truncateTable', 'update', 'delete');
+		             'eraseTable', 'truncateTable', 'update', 'delete',
+		             'getAutoCommit');
 	}
 	
 	/**
@@ -1024,6 +1033,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 	 * @return \true if the change was made/available, otherwise \false.
 	 */
 	public function setAutoCommit($mode = false) {
+		$this->autoCommit = $mode;
 		if($this->driver == 'mysqli')
 			return $this->dbh->autocommit($mode);
 		return $this->throwUnavailable("Only available with MySQLi");
@@ -1692,6 +1702,16 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 		if($q->success())
 			return $q->affectedRows();
 		return false;
+	}
+	
+	/**
+	 * @brief Return the auto commit status.
+	 * 
+	 * @return \true or \false.
+	 * @see setAutoCommit()
+	 */
+	public function getAutoCommit() {
+		return $this->autoCommit;
 	}
 	
 }
