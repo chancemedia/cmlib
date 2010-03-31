@@ -36,19 +36,61 @@ class CMForm implements CMClass {
 	}
 	
 	/**
-	 * @brief Get the value of a textarea.
+	 * @brief Internal function for recursing an array to remove slashes.
 	 * 
-	 * Get the value of a textarea, cleaning the bad characters.
-	 * 
-	 * @param $objname The field name, this will be passed through $_REQUEST[].
-	 * @return Cleaned text area value.
+	 * @param $value String or array containing values to have slashes removed.
+	 * @return Safe values.
+	 * @see Request()
+	 * @see Get()
+	 * @see Post()
 	 */
-	public static function RequestTextArea($objname) {
-		$text = $_REQUEST[$objname];
-		$text = str_replace("\\\"", "\"", $text);
-		$text = str_replace("\\'", "'", $text);
-		$text = str_replace("\r\n", "\n", $text);
-		return $text;
+	public static function StripSlashesRecursive($value) {
+		if(is_array($value)) {
+			foreach($value as $k => $v)
+				$value[$k] = CMForm::StripSlashesRecursive($v);
+		} else $value = stripslashes($value);
+		
+		return $value;
+	}
+	
+	/**
+	 * @brief Get the safe value of posted form object.
+	 * 
+	 * If you are taking values from text boxes or text areas that contain single quotes the value
+	 * will be escaped with backslashes. This function grabs a posted varaible and escapes, or
+	 * recursivly escapes the values to return the true posted value.
+	 * 
+	 * @param $objname This is the field \em name, not the string itself.
+	 * @return Safe value. This may be a string or an array.
+	 * @see Get()
+	 * @see Post()
+	 */
+	public static function Request($objname) {
+		return CMForm::StripSlashesRecursive($_REQUEST[$objname]);
+	}
+
+	/**
+	 * @brief Works like Request() but only fetches data from \c $_GET
+	 * 
+	 * @param $objname This is the field \em name, not the string itself.
+	 * @return Safe value. This may be a string or an array.
+	 * @see Request()
+	 * @see Post()
+	 */
+	public static function Get($objname) {
+		return CMForm::StripSlashesRecursive($_GET[$objname]);
+	}
+
+	/**
+	 * @brief Works like Request() but only fetches data from \c $_POST
+	 * 
+	 * @param $objname This is the field \em name, not the string itself.
+	 * @return Safe value. This may be a string or an array.
+	 * @see Request()
+	 * @see Get()
+	 */
+	public static function Post($objname) {
+		return CMForm::StripSlashesRecursive($_POST[$objname]);
 	}
 	
 	/**
