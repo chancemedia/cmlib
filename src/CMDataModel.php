@@ -145,8 +145,8 @@ class CMDataModel extends CMError implements CMClass {
 			
 		// load the $_GET and $_POST
 		$dm->drainPool(array('get', 'post'));
-		$dm->fillPool($_GET, 'get');
-		$dm->fillPool($_POST, 'post');
+		$dm->fillPool(CMForm::StripSlashesRecursive($_GET), 'get');
+		$dm->fillPool(CMForm::StripSlashesRecursive($_POST), 'post');
 		
 		// fill custom pools
 		foreach($_POST as $k => $v) {
