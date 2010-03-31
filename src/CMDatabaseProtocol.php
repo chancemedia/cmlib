@@ -588,8 +588,17 @@ interface CMDatabaseProtocol extends CMClass {
 	 * @param $mode Can be any value that will be evaluated to \true or \false according to the
 	 *        rules of PHP and the type of argument provided.
 	 * @return \true if the change was made/available, otherwise \false.
+	 * @see getAutoCommit()
 	 */
 	public function setAutoCommit($mode = false);
+	
+	/**
+	 * @brief Return the auto commit status.
+	 * 
+	 * @return \true or \false.
+	 * @see setAutoCommit()
+	 */
+	public function getAutoCommit();
 	
 	/**
 	 * @brief Commit transaction.

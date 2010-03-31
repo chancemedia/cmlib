@@ -973,6 +973,16 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		return pg_escape_string($str); 
 	}
 	
+	/**
+	 * @brief Return the auto commit status.
+	 * 
+	 * @return \true or \false.
+	 * @see setAutoCommit()
+	 */
+	public function getAutoCommit() {
+		return $this->autoCommit;
+	}
+	
 }
 
 ?>

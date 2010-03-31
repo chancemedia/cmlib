@@ -585,9 +585,10 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	 * @return An array of available methods.
 	 */
 	public function availableMethods() {
-		return array('commit', 'delete', 'disconnect', 'engine', 'eraseTable', 'escapeString', 'execute',
-		             'getDatabaseNames', 'getSchemaNames', 'getTableNames', 'insert', 'isConnected',
-		             'query', 'rollback', 'setAutoCommit', 'tableExists', 'truncateTable', 'update');
+		return array('commit', 'delete', 'disconnect', 'engine', 'eraseTable', 'escapeString',
+					 'execute', 'getDatabaseNames', 'getSchemaNames', 'getTableNames', 'insert',
+					 'isConnected', 'query', 'rollback', 'setAutoCommit', 'tableExists',
+					 'truncateTable', 'update', 'getAutoCommit');
 	}
 	
 	/**
@@ -820,6 +821,16 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	 */
 	public function escapeString($str) {
 		return str_replace("'", "''", $str); 
+	}
+	
+	/**
+	 * @brief Return the auto commit status.
+	 * 
+	 * @return \true or \false.
+	 * @see setAutoCommit()
+	 */
+	public function getAutoCommit() {
+		return $this->autoCommit;
 	}
 
 }
