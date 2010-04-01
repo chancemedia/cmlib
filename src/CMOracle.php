@@ -516,14 +516,41 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief \c INSERT statement
 	 * 
-	 * @notimp
+	 * @warning Unlink the other protocols, this function will only return the success of the query
+	 *          and not the newly created key.
+	 * 
+	 * This uses a key-value paired array to construct an \c INSERT statement like:
+	 * 
+	 * @code
+	 * $dbh->insert('mytable', array('a' => 'Something', 'b' => 123.45));
+	 * @endcode
+	 * 
+	 * Will produce and execute the following SQL:
+	 * @code
+	 * insert into mytable (a, b) values ('Something', '123.45')
+	 * @endcode
+	 * 
+	 * @throwsWarning If the query failed. 'sql' attribute contains the original SQL.
 	 * 
 	 * @param $name The name of the table.
 	 * @param $kv Associative array of fields and data.
 	 * @param $a Extra options.
 	 */
 	public function insert($name, $kv = false, $a = false) {
-		return false;
+		$sql = "insert into $name (" . implode(',', array_keys($kv)) . ") values (";
+		$first = true;
+		foreach($kv as $k => $v) {
+			if(!$first) $sql .= ",";
+			
+			// if its a CMConstant we don't encapsulate it
+			if($v instanceof CMConstant)
+				$sql .= "'" . str_replace("'", "''", $v) . "'";
+			else $sql .= $v;
+				
+			$first = false;
+		}
+		
+		return $this->query("$sql)")->success();
 	}
 	
 	/**
