@@ -556,12 +556,10 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief Get schema names.
 	 * 
-	 * @notimp
-	 * 
-	 * @return Always \false.
+	 * @return An array of schema names.
 	 */
 	public function getSchemaNames() {
-		return false;
+		return $this->query("select distinct table_schema from information_schema.tables order by table_schema")->fetchAll('line', 'vertical');
 	}
 	
 	/**
