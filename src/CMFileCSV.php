@@ -1,6 +1,7 @@
 <?php
 
 include_once('CMFileParser.php');
+include_once('CMError.php');
 
 // bla bla
 
@@ -16,7 +17,7 @@ include_once('CMFileParser.php');
  * @author Elliot Chance
  * @since 1.0
  */
-class CMFileCSV implements CMFileParser {
+class CMFileCSV extends CMError implements CMFileParser {
 	
 	/**
 	 * @brief The version of this class.
@@ -66,10 +67,19 @@ class CMFileCSV implements CMFileParser {
 	 * This constructor does nothing more than set the field names, you will need to initiate a read or
 	 * write CSV with another method in this class.
 	 * 
+	 * @throwsWarning If \p $fields is provided but is not an array. The \p $fields will be ignored
+	 *                after the error is thrown. The \c 'fields' attribute will hold the value of
+	 *                the incorrect value passed.
+	 * 
 	 * @param $fields Optional array of field names.
 	 */
 	public function CMFileCSV($fields = false) {
-		$this->fields = $fields;
+		if($fields !== false) {
+			if(is_array($fields))
+				$this->fields = $fields;
+			else $this->throwWarning("The provided \$fields is not an array",
+					array('fields' => $fields));
+		}
 	}
 	
 	/**
@@ -82,6 +92,9 @@ class CMFileCSV implements CMFileParser {
 	 * @note If you attempt to use readFile() the entire file will be processed into RAM according
 	 * to the action of that class and how it stores the data.
 	 * 
+	 * @throwsError If the file handle cannot be opened. The \c 'uri' attribute will hold the URI
+	 *              that was unable to be opened. And the method will immediatly return \false.
+	 * 
 	 * @param $uri URI can be a URL, relative or absolute path.
 	 * @param $a An associative array of extra options.
 	 * @return \true if the file handle was successfully created and is ready to start reading, otherwise
@@ -92,8 +105,10 @@ class CMFileCSV implements CMFileParser {
 	public function iterateFile($uri, $a = false) {
 		// all we have to do with this function is setup the input file handle
 		$this->f = fopen($uri, "r");
-		if(!$this->f)
+		if(!$this->f) {
+			$this->throwError("File could not be opened", array('uri' => $uri));
 			return false;
+		}
 			
 		// $a must be an array
 		if(!is_array($a))
@@ -229,6 +244,8 @@ class CMFileCSV implements CMFileParser {
 	 * See the documentation for this method in the subclasses to see what it's purpose for that
 	 * particular class is.
 	 * 
+	 * @throwsWarning If the data is not a stream or file. The method will immediatly return \false.
+	 * 
 	 * @param $options An optional argument to provide the class with extra options when reciving
 	 *        the next object.
 	 * @return \false if not available or the end of the iteration has been reached. Otherwise the
@@ -243,11 +260,8 @@ class CMFileCSV implements CMFileParser {
 				
 			// get and split the data
 			$r = fgetcsv($this->f, 4096, $this->delimiter, $this->enclosure);
-		} else {
-			// get and split the data
-			$r = "";
-			//$r = str_getcsv($this->f, 4096, $this->delimiter, $this->enclosure);
-		}
+		} else
+			return $this->throwWarning("Only files and streams are allowed with iteration.");
 			
 		// map the field names
 		if($this->fields !== false) {
@@ -298,6 +312,9 @@ class CMFileCSV implements CMFileParser {
 	 *          file is a line delimiter. If it is not then the first record will be written to the file
 	 *          on the same line as the last record making the CSV invalid.
 	 * 
+	 * @throwsWarning If the output file handle could not be prepared. The \c 'uri' attribute will
+	 *                contain the \p $uri passed to this method.
+	 * 
 	 * @param $uri Valid PHP URL, relative or absolute path.
 	 * @param $a An associative array of extra options.
 	 * @return \true if the file handle was open sucessfully and the file is ready to be written to,
@@ -312,6 +329,10 @@ class CMFileCSV implements CMFileParser {
 		if(isset($a['append']))
 			$this->f = fopen($uri, "a+");
 		else $this->f = fopen($uri, "w");
+		
+		if($this->f === false)
+			return $this->throwWarning("The output file could not be opened",
+						array('uri' => $uri));
 		
 		return $this->f !== false;
 	}
@@ -346,6 +367,14 @@ class CMFileCSV implements CMFileParser {
 	 * 
 	 * @note Before you can invoke this function you need to invoke prepareWriteFile().
 	 * 
+	 * @throwsWarning If the stream could not be opened for writing. The method will immediatly
+	 *                return \false.
+	 * 
+	 * @throwsWarning If the stream is invalid. The method will immediatly return \false.
+	 * 
+	 * @throwsError If the provided \p $item is not an array. The \c 'item' attribute will hold the
+	 *              \p $item argument that was passed. The method will immediatly return \false.
+	 * 
 	 * @param $item This must be a non-associative array. You can not use an associtave array because
 	 *        associative arrays do not have a key order and it is likely the data will be written in a
 	 *        scrambled order.
@@ -355,13 +384,17 @@ class CMFileCSV implements CMFileParser {
 	public function add($item = false) {
 		// we need an open file handle
 		if($this->f === false)
-			return false;
+			return $this->throwError("Item could not be added");
 			
 		// item must be an array or we fail
 		if(!is_array($item))
-			return false;
+			return $this->throwError("\$item is not an array", array('item' => $item));
+		
+		$success = fputcsv($this->f, $item, $this->delimiter, $this->enclosure);
+		if(!$success)
+			return $this->throwError("Item could not be added");
 			
-		return fputcsv($this->f, $item, $this->delimiter, $this->enclosure);
+		return $success;
 	}
 	
 	/**
