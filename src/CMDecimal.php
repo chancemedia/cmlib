@@ -157,26 +157,14 @@ class CMDecimal extends CMError implements CMObject {
 	 * @brief Return a \c 0 based on the precision of this object.
 	 */
 	public function zero() {
-		$r = "0";
-		if($this->prec > 0) {
-			$r .= ".";
-			for($i = 0; $i < $this->prec; ++$i)
-				$r .= "0";
-		}
-		return new CMDecimal($this->size, $this->prec, $r);
+		return new CMDecimal($this->size, $this->prec, 0);
 	}
 	
 	/**
 	 * @brief Return a \c 1 based on the precision of this object.
 	 */
 	public function one() {
-		$r = "1";
-		if($this->prec > 0) {
-			$r .= ".";
-			for($i = 0; $i < $this->prec; ++$i)
-				$r .= "0";
-		}
-		return new CMDecimal($this->size, $this->prec, $r);
+		return new CMDecimal($this->size, $this->prec, 1);
 	}
 	
 	/**

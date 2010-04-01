@@ -550,7 +550,11 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			$first = false;
 		}
 		
-		return $this->query("$sql)")->success();
+		$success = $this->query("$sql)")->success();
+		if(!$success)
+			$this->throwWarning("Query failed", array('sql' => "$sql)"));
+		
+		return $success;
 	}
 	
 	/**
