@@ -36,6 +36,19 @@ class CMForm implements CMClass {
 	}
 	
 	/**
+	 * @brief Escape double-quotes for HTML attribute value.
+	 * 
+	 * Your should not manually call this function as it will be called by the other functions as
+	 * needed.
+	 * 
+	 * @param $str The string to parse.
+	 * @return Parsed string for HTML attribute.
+	 */
+	public static function HTMLEscape($str) {
+		return str_replace('"', '&quot;', $str);
+	}
+	
+	/**
 	 * @brief Internal function for recursing an array to remove slashes.
 	 * 
 	 * @param $value String or array containing values to have slashes removed.
@@ -164,6 +177,10 @@ class CMForm implements CMClass {
 				}
 			}
 		}
+		
+		// now escape them
+		foreach($a as $k => $v)
+			$a[$k] = CMForm::HTMLEscape($v);
 			
 		return $a;
 	}
