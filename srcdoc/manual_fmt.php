@@ -1,10 +1,13 @@
 <?php
 
 /**
- * @page manual_fmt 4. Formatting and Validating
+ * @page manual_fmt 4. Data Processing
  * 
  * @section manual_fmt_subpages Subpages
- * -# \subpage manual_fmt_db
+ * -# \subpage manual_fmt_vd
+ * -# \subpage manual_fmt_fmt
+ * -# \subpage manual_fmt_constants
+ * -# \subpage manual_fmt_decimal
  * 
  * @section cmformatter_desc Description
  * The CMFormatter can be used to format or manipulate dates, times, timestamps, numbers, booleans,
