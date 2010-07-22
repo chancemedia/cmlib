@@ -2,6 +2,10 @@
 
 include_once("../lib/CMFormatter.php");
 include_once("../lib/CMMySQL.php");
+include_once("config.php");
+
+global $g_mysql_user, $g_mysql_pass, $g_mysql_host, $g_mysql_name;
+$dbh = new CMMySQL("mysql://$g_mysql_user:$g_mysql_pass@$g_mysql_host/$g_mysql_name");
 
 function getTestUnits() {
 	die(implode(';', array(
@@ -80,16 +84,35 @@ function test7() {
 }
 
 function test8() {
-	$dbh = new CMMySQL("mysql://root:abcd1234@localhost/test");
+	global $dbh;
+	
 	if(!$dbh->isConnected())
 		skip();
+		
+	// we may have to create the table
+	$dbh->query("create table if not exists cmlib_product (".
+	            "id int auto_increment primary key,".
+	            "productname text,".
+	            "cost float".
+	            ")");
 	
+	// always start a fresh
+	$dbh->query("truncate cmlib_product");
+	
+	// add records
+	$dbh->insert("cmlib_product", array(
+		'productname' => 'Magic Carpet',
+		'cost' => 450
+	));
+	
+	// initialise formatter
 	$f = new CMFormatter(array(
 	       'created' => 'timestamp|F j, Y, g:i a',
 	       'cost' => 'number|fixed=2|thousands=,|pre=$'
 	     ));
-	     
-	$q = $dbh->query("select * from product where cost>? and productname=? order by id",
+
+	// run test
+	$q = $dbh->query("select * from cmlib_product where cost>? and productname=? order by id",
 	                 array(100, 'Magic Carpet'),    // bind values
 	                 array('formatter' => $f));     // attach formatter
 	

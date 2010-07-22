@@ -3,6 +3,24 @@
 include_once("CMQueryProtocol.php");
 include_once("CMBetaClass.php");
 
+if(!function_exists("oci_fetch_assoc")) {
+	function oci_fetch_assoc($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_fetch_row")) {
+	function oci_fetch_row($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_fetch_array")) {
+	function oci_fetch_array($a, $b) {
+		return false;
+	}
+}
+
 /**
  * @brief Oracle database query handler.
  * 
@@ -99,6 +117,8 @@ class CMOracleQuery implements CMQueryProtocol {
 			$r = oci_fetch_assoc($this->result);
 		elseif($rowMode == 'line')
 			$r = oci_fetch_row($this->result);
+		elseif($rowMode == 'row')
+			$r = oci_fetch_array($this->result, OCI_BOTH);
 		elseif($rowMode == 'pair') {
 			$r = oci_fetch_row($this->result);
 			$r = array($r[0], $r[1]);

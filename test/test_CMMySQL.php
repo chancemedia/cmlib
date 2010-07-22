@@ -22,13 +22,14 @@ function getTestUnits() {
 		'test4=truncateTable()',
 		'test5=getTableNames()',
 		'test6=insert()',
+		'test14=!',
 		'test7=query(): SELECT',
 		'test8=totalRows()',
 		'test9=fetch()',
 		'test10=fetchAll()',
 		'test11=update()',
 		'test12=delete()',
-		'test13=Fail connect'
+		'test13=Fail connect',
 	)));
 }
 
@@ -40,9 +41,10 @@ function test1() {
 function test2() {
 	global $dbh;
 	$q = $dbh->query("CREATE TABLE IF NOT EXISTS cmlib_test (".
-                        "id int auto_increment primary key,".
-                        "name varchar(255),".
-                        "num float default 0)");
+                     "id int auto_increment primary key,".
+                     "name varchar(255),".
+                     "num numeric(9,1) default 0".
+	                 ")");
 	pass($q->success());
 }
 
@@ -114,6 +116,14 @@ function test13() {
 	$fail = new CMMySQL("mysql://blabla@localhost/blabla", array('error' => $e));
 	$errors = $e->errors();
 	pass($errors[0]['_reason'] != '');
+}
+
+function test14() {
+	global $dbh;
+	$q = $dbh->query("select * from cmlib_test");
+	while($r = $q->fetch('row')) {
+		print_r($r);
+	}
 }
 
 include_once('tester.php');

@@ -114,14 +114,18 @@ class CMMySQLQuery implements CMQueryProtocol {
 			if($rowMode == 'assoc')
 				$r = $this->result->fetch_assoc();
 			elseif($rowMode == 'line')
-				$r = $this->result->fetch_row();
+				$r = $this->result->fetch_array(MYSQLI_NUM);
+			elseif($rowMode == 'row')
+				$r = $this->result->fetch_array(MYSQLI_BOTH);
 			elseif($rowMode == 'pair') {
 				$r = $this->result->fetch_row();
-				if(!$r) return false;
+				if(!$r)
+					return false;
 				$r = array($r[0] => $r[1]);
 			} elseif($rowMode == 'cell') {
 				$r = $this->result->fetch_row();
-				if(!$r) return false;
+				if(!$r)
+					return false;
 				$r = $r[0];
 			} else $r = false;
 			
@@ -130,14 +134,18 @@ class CMMySQLQuery implements CMQueryProtocol {
 			if($rowMode == 'assoc')
 				$r = mysql_fetch_assoc($this->result);
 			elseif($rowMode == 'line')
-				$r = mysql_fetch_array($this->result);
+				$r = mysql_fetch_array($this->result, MYSQL_NUM);
+			elseif($rowMode == 'row')
+				$r = mysql_fetch_array($this->result, MYSQL_BOTH);
 			elseif($rowMode == 'pair') {
 				$r = mysql_fetch_array($this->result);
-				if(!$r) return false;
+				if(!$r)
+					return false;
 				$r = array($r[0] => $r[1]);
 			} elseif($rowMode == 'cell') {
 				$r = mysql_fetch_array($this->result);
-				if(!$r) return false;
+				if(!$r)
+					return false;
 				$r = $r[0];
 			} else $r = false;
 			

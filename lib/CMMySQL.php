@@ -741,6 +741,11 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			echo "$sql)";
 		
 		if($this->driver == 'mysqli') {
+			if(!$this->dbh) {
+				$this->throwWarning("No valid database handle");
+				return 0;
+			}
+			
 			$q = $this->dbh->prepare("$sql)");
 			if($q) {
 				$q->execute();

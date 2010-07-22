@@ -95,6 +95,8 @@ class CMPostgreSQLQuery implements CMQueryProtocol {
 			$r = pg_fetch_assoc($this->query);
 		elseif($rowMode == 'line')
 			$r = pg_fetch_row($this->query);
+		elseif($rowMode == 'row')
+			$r = pg_fetch_array($this->query, NULL, PGSQL_BOTH);
 		elseif($rowMode == 'pair') {
 			$r = pg_fetch_row($this->query);
 			if(!$r) return false;
