@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_transactions 5.6. Transactions
+ * @page manual_databases_transactions 5.7. Transactions
  * 
  * @section manual_databases_transactions_contents Contents
  * -# \ref manual_databases_transactions_transactions

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_iud INSERT, UPDATE and DELETE
+ * @page manual_databases_iud 5.4. INSERT, UPDATE and DELETE
  * 
  * @section manual_databases_iud_contents Contents
  * -# \ref manual_databases_iud_insert

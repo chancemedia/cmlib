@@ -6,6 +6,18 @@
  * @section manual_html_form_contents Contents
  * -# \ref manual_html_form_example
  * -# \ref manual_html_form_attr
+ * -# \ref manual_html_form_objects
+ * 	-# \ref manual_html_form_button
+ * 	-# \ref manual_html_form_checkbox
+ * 	-# \ref manual_html_form_checkboxgroup
+ * 	-# \ref manual_html_form_hidden
+ * 	-# \ref manual_html_form_menu
+ * 	-# \ref manual_html_form_password
+ * 	-# \ref manual_html_form_radiogroup
+ * 	-# \ref manual_html_form_reset
+ * 	-# \ref manual_html_form_submit
+ * 	-# \ref manual_html_form_textbox
+ * 	-# \ref manual_html_form_textarea
  * 
  * 
  * @section manual_html_form_example Example
@@ -196,6 +208,147 @@
  * 		<td>Only applies to TextArea.</td>
  * 	</tr>
  * </table>
+ * 
+ * 
+ * @section manual_html_form_objects Form Objects
+ * 
+ * 
+ * @section manual_html_form_button Generic Button
+ * 
+ * A non-submitting button. Usually used with javascipt actions.
+ * 
+ * @code
+ * echo CMForm::Button(array(
+ *   'value' => "Click Me!",
+ *   'onclick' => "alert('howdy!')"
+ * ));
+ * @endcode
+ * 
+ * <ul>
+ *   <li>If you do not provide a <tt>name</tt> it will be use <tt>"button"</tt>.</li>
+ *   <li>If you do not provide a <tt>value</tt> it will be use <tt>"Button"</tt>.</li>
+ * </ul>
+ * 
+ * 
+ * @section manual_html_form_reset Reset Button
+ * 
+ * This is a form reset button.
+ * @code
+ * echo CMForm::ResetButton();
+ * @endcode
+ * 
+ * <ul>
+ *   <li>If you do not provide a <tt>name</tt> it will be use <tt>"button"</tt>.</li>
+ *   <li>If you do not provide a <tt>value</tt> it will be use <tt>"Reset"</tt>.</li>
+ * </ul>
+ * 
+ * 
+ * @section manual_html_form_submit Submit Button
+ * 
+ * @code
+ * echo CMForm::SubmitButton(array(
+ *   'value' => 'Click Me!'
+ * ));
+ * @endcode
+ * 
+ * <ul>
+ *   <li>If you do not provide a <tt>name</tt> it will be use <tt>"submit"</tt>.</li>
+ *   <li>If you do not provide a <tt>value</tt> it will be use <tt>"Submit"</tt>.</li>
+ * </ul>
+ * 
+ * 
+ * @section manual_html_form_textarea Text Area
+ * 
+ * @code
+ * echo CMForm::TextArea(array(
+ *   'name' => 'myfield',
+ *   'value' => 'type in me'
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_textbox Text Box
+ * 
+ * @code
+ * echo CMForm::TextBox(array(
+ *   'name' => 'myfield',
+ *   'value' => 'type in me'
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_password Password Box
+ * 
+ * @code
+ * echo CMForm::PasswordBox(array(
+ *   'name' => 'secret'
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_hidden Hidden Field
+ * 
+ * @code
+ * echo CMForm::Hidden(array(
+ *   'name' => 'ghost',
+ *   'value' => 'Just passing through ...'
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_menu Menu
+ * 
+ * Popup menu.
+ * 
+ * @code
+ * echo CMForm::Menu(array(
+ *   'name' => 'popup',
+ *   'data' => array("Item 1", "Item 2", "Item 3"),
+ *   'value' => "Item 2"
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_list List Box
+ * 
+ * @code
+ * echo CMForm::ListBox(array(
+ *   'name' => 'choose_one',
+ *   'data' => array("Item 1", "Item 2", "Item 3"),
+ *   'value' => "Item 2"
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_checkbox Checkbox
+ * 
+ * @code
+ * echo CMForm::Checkbox(array(
+ *   'name' => 'onoff'
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_radiogroup Radio Group
+ * 
+ * @code
+ * echo CMForm::RadioGroup(array(
+ *   'name' => 'choose_one',
+ *   'data' => array("Item 1", "Item 2", "Item 3"),
+ *   'value' => "Item 2"
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_form_checkboxgroup Checkbox Group
+ * 
+ * @code
+ * echo CMForm::CheckboxGroup(array(
+ *   'name' => 'choose_one',
+ *   'data' => array("Item 1", "Item 2", "Item 3"),
+ *   'value' => array("Item 2", "Item 3")
+ * ));
+ * @endcode
  * 
  */
 

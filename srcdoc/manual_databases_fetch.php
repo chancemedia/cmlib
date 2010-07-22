@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_fetch 5.4. Fetching Data
+ * @page manual_databases_fetch 5.5. Fetching Data
  * 
  * @section manual_databases_fetch_contents Contents
  * -# \ref manual_databases_fetch_fetch

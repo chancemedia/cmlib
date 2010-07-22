@@ -15,15 +15,15 @@
  * 
  * 
  * @section mainpage_testing Testing and Quality Control
- * CMLIB is supplied with a script that performs more than 70 tests to make sure the expected outcomes
+ * CMLIB is supplied with a script that performs more than 80 tests to make sure the expected outcomes
  * work on your combination of operating system and PHP version.
  * 
  * You may run this test at time and it is recommnded you run it after install or updating CMLIB:
  * <pre>
- * $ cd cmlib/src/lib/test
+ * $ cd cmlib/test
  * $ php testall.php
  * ...
- * All Done: 70 passed, 0 skipped, 0 failed
+ * All Done: 82 passed, 0 skipped, 0 failed
  * </pre>
  * 
  * 
@@ -39,11 +39,11 @@
  *   </tr>
  *   <tr>
  *     <td valign="top">CMFormatter<br>
- *     bla</td>
+ *     Make it look pretty, without the mundane details.</td>
  *     <td valign="top">CMMySQL, CMPostgreSQL and CMOracle<br>
- *     bla</td>
+ *     Simple but advanced relational database interoperability.</td>
  *     <td valign="top">CMValidator<br>
- *     bla</td>
+ *     Easy and automatic data validation and control.</td>
  *   </tr>
  * </table>
  * 

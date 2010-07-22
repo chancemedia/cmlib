@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_extend 5.8. Custom Engines
+ * @page manual_databases_extend 5.9. Custom Engines
  * 
  * @section manual_databases_extend_contents Contents
  * -# \ref manual_databases_extend_intro

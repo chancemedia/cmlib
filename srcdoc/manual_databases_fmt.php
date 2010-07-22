@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_fmt 5.7. Formatter
+ * @page manual_databases_fmt 5.8. Formatter
  * 
  * @section manual_databases_fmt_contents Contents
  * -# \ref manual_databases_fmt_intro

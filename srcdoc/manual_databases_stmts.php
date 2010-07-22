@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @page manual_databases_stmts 5.5. Prepared Statements
+ * @page manual_databases_stmts 5.6. Prepared Statements
  * 
  * @section manual_databases_stmts_contents Contents
  * -# \ref manual_databases_stmts_prepare
