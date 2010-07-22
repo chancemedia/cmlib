@@ -5,6 +5,49 @@ include_once("CMOracleQuery.php");
 include_once("CMConstant.php");
 include_once("CMError.php");
 
+if(!function_exists("oci_parse")) {
+	function oci_parse($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_execute")) {
+	function oci_execute($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_connect")) {
+	function oci_connect($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_error")) {
+	function oci_error($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_commit")) {
+	function oci_commit($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_rollback")) {
+	function oci_rollback($a) {
+		return false;
+	}
+}
+
+if(!function_exists("oci_close")) {
+	function oci_close($a) {
+		return false;
+	}
+}
+
+
 /**
  * @brief Oracle Database connectivity.
  * 
