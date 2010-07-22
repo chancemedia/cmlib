@@ -3,6 +3,36 @@
 # BENCODER v1.3 - Shen Cheng-Da (cdsheen at gmail.com)
 # Project home: http://bbs.giga.net.tw/bencoder.php
 
+if(!function_exists("readlink")) {
+	function readlink() {
+		die("Function readlink() cannot be found");
+	}
+}
+
+if(!function_exists("symlink")) {
+	function symlink() {
+		die("Function symlink() cannot be found");
+	}
+}
+
+if(!function_exists("bcompiler_write_header")) {
+	function bcompiler_write_header() {
+		die("Function bcompiler_write_header() cannot be found");
+	}
+}
+
+if(!function_exists("bcompiler_write_file")) {
+	function bcompiler_write_file() {
+		die("Function bcompiler_write_file() cannot be found");
+	}
+}
+
+if(!function_exists("bcompiler_write_footer")) {
+	function bcompiler_write_footer() {
+		die("Function bcompiler_write_footer() cannot be found");
+	}
+}
+
 $title = 'BENCODER v1.3 - Encode your PHP script using bcompiler';
 
 $help =	<<<HELP
