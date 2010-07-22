@@ -288,7 +288,7 @@ class CMForm implements CMClass {
 			$a['name'] = 'submit';
 		
 		if($a['value'] == '')
-			$a['value'] = 'Submit';
+			$a['value'] = 'Reset';
 		
 		$html = "<input type='reset'" . CMForm::MainAttributes($a);
 		$html .= ' value="' . $a['value'] . '"';
@@ -314,7 +314,10 @@ class CMForm implements CMClass {
 		if($a['name'] == '')
 			$a['name'] = 'button';
 		
-		$html = "<input type='submit'" . CMForm::MainAttributes($a);
+		if($a['value'] == '')
+			$a['value'] = 'Button';
+		
+		$html = "<input type='button'" . CMForm::MainAttributes($a);
 		$html .= ' value="' . $a['value'] . '"';
 		$html .= " />";
 		return $html;
