@@ -247,6 +247,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * @return \false.
 	 */
 	public function writeFile($uri, $a = false) {
+		$this->throwWarning("writeFile() is not implemented for CMFileCSV");
 		return false;
 	}
 	
@@ -281,6 +282,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * @return \false.
 	 */
 	public function writeString($a = false) {
+		$this->throwWarning("writeString() is not implemented for CMFileCSV");
 		return false;
 	}
 	
@@ -463,6 +465,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * @see isCaching()
 	 */
 	public function setCache($mode = true) {
+		$this->throwWarning("setCache() is not implemented for CMFileCSV");
 		return false;
 	}
 	
