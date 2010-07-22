@@ -13,14 +13,22 @@ $tests = array(
 	new CMTest('CMVCard', "test_CMVCard.php"),
 	new CMTest('CMVersion', "test_CMVersion.php")
 );
-$focus_test = '';
+
+// get the list of tests to run
+$focus_tests = array();
+if($argc == 1) {
+	foreach($tests as $t)
+		$focus_tests[] = $t->name;
+}
+else
+	$focus_tests = $argv;
 
 // run the tests
 $fail = 0;
 $pass = 0;
 $skip = 0;
 foreach($tests as $t) {
-	if($focus_test != '' && $t->name != $focus_test)
+	if(!in_array($t->name, $focus_tests))
 		continue;
 		
 	$t->run();
