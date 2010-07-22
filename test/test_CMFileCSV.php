@@ -7,7 +7,8 @@ function getTestUnits() {
 	die(implode(';', array(
 		'test1=iterateFile() and next()',
 		'test2=Field mapping',
-		'test3=prepareWriteFile(), add() and finishWriteFile()'
+		'test3=prepareWriteFile(), add() and finishWriteFile()',
+		'test4=iterateString() and next()'
 	)));
 }
 
@@ -89,6 +90,28 @@ function test3() {
 	$csvOut->finishWriteFile();
 	
 	pass();
+}
+
+function test4() {
+	$csv = new CMFileCSV();
+	
+	$csv_string = implode("\n", array(
+		"First name,Last name,Email",
+		"Elliot,Chance,elliot@chancemedia.com",
+		"Joe,Bloggs,joe@bloggs.com"
+	));
+	
+	if(!$csv->iterateString($csv_string, array('skip' => 1)))
+		die("Unable to read file!");
+		
+	$final = array();
+	while($line = $csv->next())
+		$final[] = $line;
+		
+	$pass1 = (count($final) == 2);
+	$pass2 = array_diff($final[0], array('Elliot', 'Chance', 'elliot@chancemedia.com'));
+	$pass3 = array_diff($final[1], array('Joe', 'Bloggs', 'joe@bloggs.com'));
+	pass($pass1 && count($pass2) == 0 && count($pass3) == 0);
 }
 
 include_once('tester.php');
