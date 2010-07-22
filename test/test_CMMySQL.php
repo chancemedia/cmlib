@@ -22,7 +22,6 @@ function getTestUnits() {
 		'test4=truncateTable()',
 		'test5=getTableNames()',
 		'test6=insert()',
-		'test14=!',
 		'test7=query(): SELECT',
 		'test8=totalRows()',
 		'test9=fetch()',
@@ -116,14 +115,6 @@ function test13() {
 	$fail = new CMMySQL("mysql://blabla@localhost/blabla", array('error' => $e));
 	$errors = $e->errors();
 	pass($errors[0]['_reason'] != '');
-}
-
-function test14() {
-	global $dbh;
-	$q = $dbh->query("select * from cmlib_test");
-	while($r = $q->fetch('row')) {
-		print_r($r);
-	}
 }
 
 include_once('tester.php');
