@@ -1,15 +1,14 @@
 <?php
 
 include_once('CMFileParser.php');
-
-// commit 2
+include_once('CMError.php');
 
 /**
  * @brief vCard files.
  * 
  * @author Elliot Chance
  */
-class CMFileVCF implements CMFileParser {
+class CMFileVCF extends CMError implements CMFileParser {
 	
 	/**
 	 * @brief The version of this class.
@@ -45,11 +44,12 @@ class CMFileVCF implements CMFileParser {
 	}
 	
 	/**
-	 * @brief Decode one or multiple vCards and return as one large array.
+	 * @brief Read one or more vCards from a string.
 	 * 
-	 * @param $content
+	 * @param $content Input string to parse.
+	 * @param $a Extra attributes.
 	 */
-	public static function DissectVCards($content) {
+	public function readString($content, $a = false) {
 		// prepare
 		$r = array();
 		$entry = array();
@@ -105,6 +105,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $a Extra attributes.
 	 */
 	public function readFile($url, $a = false) {
+		$this->throwWarning("readFile() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -115,16 +116,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $a Extra attributes.
 	 */
 	public function writeFile($url, $a = false) {
-		return false;
-	}
-	
-	/**
-	 * @brief Read one or more vCards from a string.
-	 * 
-	 * @param $str Input string to parse.
-	 * @param $a Extra attributes.
-	 */
-	public function readString($str, $a = false) {
+		$this->throwWarning("writeFile() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -134,6 +126,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $a Extra attributes.
 	 */
 	public function writeString($a = false) {
+		$this->throwWarning("writeString() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -199,6 +192,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $options
 	 */
 	public function next($options = false) {
+		$this->throwWarning("next() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -211,6 +205,7 @@ class CMFileVCF implements CMFileParser {
 	 *         \false.
 	 */
 	public function iterateFile($url, $a = false) {
+		$this->throwWarning("iterateFile() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -221,6 +216,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $a Extra attributes.
 	 */
 	public function iterateString($url, $a = false) {
+		$this->throwWarning("iterateString() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -247,6 +243,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $a
 	 */
 	public function prepareWriteFile($uri, $a = false) {
+		$this->throwWarning("prepareWriteFile() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -254,6 +251,7 @@ class CMFileVCF implements CMFileParser {
 	 * @see CMFileParser::isCaching()
 	 */
 	public function isCaching() {
+		$this->throwWarning("isCaching() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -261,6 +259,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $mode
 	 */
 	public function setCache($mode = true) {
+		$this->throwWarning("setCache() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -268,6 +267,7 @@ class CMFileVCF implements CMFileParser {
 	 * @param $item
 	 */
 	public function add($item = false) {
+		$this->throwWarning("add() is not implemented for CMFileICAL");
 		return false;
 	}
 	
@@ -275,6 +275,7 @@ class CMFileVCF implements CMFileParser {
 	 * @see CMFileParser::finishWriteFile()
 	 */
 	public function finishWriteFile() {
+		$this->throwWarning("finishWriteFile() is not implemented for CMFileICAL");
 		return false;
 	}
 	
