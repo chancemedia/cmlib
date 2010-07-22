@@ -253,14 +253,23 @@ class CMFileCSV extends CMError implements CMFileParser {
 	/**
 	 * @brief Parse one ore more CSV lines.
 	 * 
-	 * @warning This method has not been implemented yet.
+	 * Parse an entire string and return a two-dimentional array of parsed data.
 	 * 
 	 * @param $str Input string to parse.
 	 * @param $a An associative array of extra options.
-	 * @return \false.
+	 * @return \false on error, otherwise an array.
 	 */
 	public function readString($str, $a = false) {
-		return false;
+		// open the file
+		if($this->iterateString($str, $a) === false)
+			return false;
+			
+		// read all the elements
+		$r = array();
+		while($line = $this->next())
+			$r[] = $line;
+		
+		return $r;
 	}
 	
 	/**
