@@ -156,7 +156,9 @@ interface CMFileParser extends CMClass {
 	 * 
 	 * @param $uri Valid PHP URL, relative or absolute path.
 	 * @param $a An associative array of extra options.
-	 * @return \true on successful completion, otherwise \false. See error() for a \false return.
+	 * @return This function may return an object, array, string or true on success depending on
+	 *         how the child class handles the file, but will always return exactly \false on
+	 *         error. See error() for a \false return.
 	 * @see error()
 	 * @see isCaching()
 	 * @see setCaching()
@@ -172,7 +174,9 @@ interface CMFileParser extends CMClass {
 	 * 
 	 * @param $str Input string to parse.
 	 * @param $a An associative array of extra options.
-	 * @return \true on successful completion, otherwise \false. See error() for a \false return.
+	 * @return This function may return an object, array, string or true on success depending on
+	 *         how the child class handles the string, but will always return exactly \false on
+	 *         error. See error() for a \false return.
 	 * @see error()
 	 * @see isCaching()
 	 * @see setCaching()
