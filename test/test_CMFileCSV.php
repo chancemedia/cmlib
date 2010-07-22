@@ -10,6 +10,7 @@ function getTestUnits() {
 		'test3=prepareWriteFile(), add() and finishWriteFile()',
 		'test4=iterateString() and next()',
 		'test5=readFile()',
+		'test6=readString()',
 	)));
 }
 
@@ -119,6 +120,18 @@ function test5() {
 	$csv = new CMFileCSV();
 	
 	pass(count($csv->readFile('tmp/csv1.csv')) == 4);
+}
+
+function test6() {
+	$csv = new CMFileCSV();
+	
+	$csv_string = implode("\n", array(
+		"First name,Last name,Email",
+		"Elliot,Chance,elliot@chancemedia.com",
+		"Joe,Bloggs,joe@bloggs.com"
+	));
+	
+	pass(count($csv->readString($csv_string)) == 3);
 }
 
 include_once('tester.php');
