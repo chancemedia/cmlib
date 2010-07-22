@@ -3,7 +3,62 @@
 include_once('CMFileParser.php');
 include_once('CMError.php');
 
-// bla bla
+if(!function_exists('str_getcsv')) {
+	function str_getcsv($input, $delimiter = ',', $enclosure = '"',
+	                    $escape = "\\", $eol = '\n') {
+		if(is_string($input) && !empty($input)) {
+			$output = array ();
+			$tmp = preg_split("/" . $eol . "/", $input);
+			if (is_array($tmp) && !empty($tmp)) {
+				while ( list ( $line_num, $line ) = each($tmp) ) {
+					if (preg_match("/" . $escape . $enclosure . "/", $line)) {
+						while ( $strlen = strlen($line) ) {
+							$pos_delimiter = strpos($line, $delimiter);
+							$pos_enclosure_start = strpos($line, $enclosure);
+							if(is_int($pos_delimiter) &&
+							   is_int($pos_enclosure_start) &&
+							   ($pos_enclosure_start < $pos_delimiter)) {
+								$enclosed_str = substr($line, 1);
+								$pos_enclosure_end =
+									strpos($enclosed_str, $enclosure);
+								$enclosed_str = substr($enclosed_str, 0,
+									$pos_enclosure_end);
+								$output [$line_num] [] = $enclosed_str;
+								$offset = $pos_enclosure_end + 3;
+							} else {
+								if(empty($pos_delimiter) &&
+								   empty($pos_enclosure_start)) {
+									$output [$line_num][] = substr($line, 0);
+									$offset = strlen($line);
+								} else {
+									$output [$line_num][] =
+										substr($line, 0, $pos_delimiter);
+									$offset = (!empty($pos_enclosure_start) &&
+									($pos_enclosure_start < $pos_delimiter)) ?
+									$pos_enclosure_start : $pos_delimiter + 1;
+								}
+							}
+							$line = substr($line, $offset);
+						}
+					} else {
+						$line = preg_split("/" . $delimiter . "/", $line);
+						
+						// Validating against pesky extra line breaks creating
+						// false rows.
+						if(is_array($line) && !empty($line[0]))
+							$output [$line_num] = $line;
+					}
+				}
+				
+				return $output;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+}
 
 /**
  * @brief Class for handling CSV (comma-separated values) files.
@@ -62,6 +117,13 @@ class CMFileCSV extends CMError implements CMFileParser {
 	private $fields = false;
 	
 	/**
+	 * @brief Used when this->f is a string handle.
+	 * 
+	 * As the string is read incrementally this variable will keep track of the read position.
+	 */
+	private $pos = 0;
+	
+	/**
 	 * @brief Create a new CMFileCSV with optional field names.
 	 * 
 	 * This constructor does nothing more than set the field names, you will need to initiate a read or
@@ -118,7 +180,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 		if(isset($a['skip'])) {
 			for($i = 0; $i < $a['skip']; ++$i)
 				$this->next();
-		}	
+		}
 		
 		return true;
 	}
@@ -137,13 +199,26 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * @return \true on successful completion, otherwise \false. See error() for a \false return.
 	 */
 	public function iterateString($str, $a = false) {
-		return false;
+		// assign the string to our internal handle with a trailing line, this is very important
+		$this->f = "$str\n";
+		
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// skip lines
+		if(isset($a['skip'])) {
+			for($i = 0; $i < $a['skip']; ++$i)
+				$this->next();
+		}
+		
+		return true;
 	}
 	
 	/**
 	 * @brief Read a CSV file.
 	 * 
-	 * @warning THis function currently does nothing.
+	 * @warning This function currently does nothing.
 	 * 
 	 * @param $url Valid PHP URL, relative or absolute path.
 	 * @param $a An associative array of extra options.
@@ -253,15 +328,26 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 */
 	public function next($options = false) {
 		// iterateFile
-		if(get_resource_type($this->f) == 'stream' || get_resource_type($this->f) == 'file') {
+		if(is_resource($this->f) && (get_resource_type($this->f) == 'stream' ||
+		   get_resource_type($this->f) == 'file')) {
 			// make sure the file handle is open and still got data left
 			if($this->f === false || feof($this->f))
 				return false;
 				
 			// get and split the data
 			$r = fgetcsv($this->f, 4096, $this->delimiter, $this->enclosure);
-		} else
-			return $this->throwWarning("Only files and streams are allowed with iteration.");
+		} else {
+			// grab the next line
+			$new_pos = strpos($this->f, "\n", $this->pos);
+			
+			// return false when we reach the end
+			if($new_pos === false || $new_pos >= strlen($this->f))
+				return false;
+				
+			$line = substr($this->f, $this->pos, $new_pos - $this->pos);
+			$r = str_getcsv($line, $this->delimiter, $this->enclosure);
+			$this->pos = $new_pos + 1;
+		}
 			
 		// map the field names
 		if($this->fields !== false) {
