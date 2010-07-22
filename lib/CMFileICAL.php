@@ -162,7 +162,7 @@ class CMFileICAL implements CMFileParser {
 	 * @return Array of file extensions that contain the dot (.) where needed.
 	 */
 	public function getStandardExtensions() {
-		return false;
+		return array('.ical', '.ics', '.ifb', '.icalendar');
 	}
 	
 	/**
@@ -193,7 +193,7 @@ class CMFileICAL implements CMFileParser {
 	 * @return An array of internet media types.
 	 */
 	public function getInternetMediaTypes() {
-		return false;
+		return array('text/calendar');
 	}
 	
 	/**
