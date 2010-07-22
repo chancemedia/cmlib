@@ -56,6 +56,9 @@ class CMLicense {
 	 * @return Either "Invalid", "Active" or "Expired".
 	 */
 	public static function GetStatus() {
+		// this software is free
+		return "Active";
+		
 		$s = CMLicense::$LicenseName . " " . CMLicense::$Expire . " " . CMLicense::GetSalt();
 		if(sha1($s) !== CMLicense::$ProtectionCode)
 			return "Invalid";
@@ -76,6 +79,9 @@ class CMLicense {
 	 * @return Nothing.
 	 */
 	public static function CheckLicense() {
+		// this software is free
+		return true;
+		
 		if(CMLicense::$Expire < time())
 			die("Your license has expired");
 			
@@ -92,15 +98,5 @@ class CMLicense {
 	}
 	
 }
-
-CMLicense::$LicenseName = "Bob Smith Industries";
-CMLicense::$Expire = 1293840000; // 2011-01-01 00:00:00
-
-// Generated from sha1("$LicenseName $Expire $Salt")
-CMLicense::$ProtectionCode = sha1(CMLicense::$LicenseName . " " . CMLicense::$Expire . " " . CMLicense::GetSalt());
-
-// contact details
-CMLicense::$AccountManager = "Elliot Chance";
-CMLicense::$AccountContact = "+61 2 9477 2188";
 
 ?>
