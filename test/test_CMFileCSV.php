@@ -8,7 +8,8 @@ function getTestUnits() {
 		'test1=iterateFile() and next()',
 		'test2=Field mapping',
 		'test3=prepareWriteFile(), add() and finishWriteFile()',
-		'test4=iterateString() and next()'
+		'test4=iterateString() and next()',
+		'test5=readFile()',
 	)));
 }
 
@@ -112,6 +113,12 @@ function test4() {
 	$pass2 = array_diff($final[0], array('Elliot', 'Chance', 'elliot@chancemedia.com'));
 	$pass3 = array_diff($final[1], array('Joe', 'Bloggs', 'joe@bloggs.com'));
 	pass($pass1 && count($pass2) == 0 && count($pass3) == 0);
+}
+
+function test5() {
+	$csv = new CMFileCSV();
+	
+	pass(count($csv->readFile('tmp/csv1.csv')) == 4);
 }
 
 include_once('tester.php');

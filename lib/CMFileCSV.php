@@ -218,14 +218,23 @@ class CMFileCSV extends CMError implements CMFileParser {
 	/**
 	 * @brief Read a CSV file.
 	 * 
-	 * @warning This function currently does nothing.
+	 * Parse an entire file and return a two-dimentional array of parsed data.
 	 * 
 	 * @param $url Valid PHP URL, relative or absolute path.
 	 * @param $a An associative array of extra options.
-	 * @return \false
+	 * @return \false on error, otherwise an array.
 	 */
 	public function readFile($url, $a = false) {
-		return false;
+		// open the file
+		if($this->iterateFile($url, $a) === false)
+			return false;
+			
+		// read all the elements
+		$r = array();
+		while($line = $this->next())
+			$r[] = $line;
+		
+		return $r;
 	}
 	
 	/**
