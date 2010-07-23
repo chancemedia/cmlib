@@ -1,6 +1,6 @@
 <?php
 
-include_once('CMFileParser.php');
+include_once('CMFile.php');
 include_once('CMError.php');
 
 if(!function_exists('str_getcsv')) {
@@ -72,7 +72,7 @@ if(!function_exists('str_getcsv')) {
  * @author Elliot Chance
  * @since 1.0
  */
-class CMFileCSV extends CMError implements CMFileParser {
+class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	
 	/**
 	 * @brief The version of this class.
@@ -164,7 +164,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * 
 	 * @see error()
 	 */
-	public function iterateFile($uri, $a = false) {
+	public function readFile($uri, $a = false) {
 		// all we have to do with this function is setup the input file handle
 		$this->f = fopen($uri, "r");
 		if(!$this->f) {
@@ -198,7 +198,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 	 * @param $a An associative array of extra options.
 	 * @return \true on successful completion, otherwise \false. See error() for a \false return.
 	 */
-	public function iterateString($str, $a = false) {
+	public function readString($str, $a = false) {
 		// assign the string to our internal handle with a trailing line, this is very important
 		$this->f = "$str\n";
 		
@@ -215,20 +215,7 @@ class CMFileCSV extends CMError implements CMFileParser {
 		return true;
 	}
 	
-	/**
-	 * @brief Read a CSV file.
-	 * 
-	 * Parse an entire file and return a two-dimentional array of parsed data.
-	 * 
-	 * @param $url Valid PHP URL, relative or absolute path.
-	 * @param $a An associative array of extra options.
-	 * @return \false on error, otherwise an array.
-	 */
-	public function readFile($url, $a = false) {
-		// open the file
-		if($this->iterateFile($url, $a) === false)
-			return false;
-			
+	public function readAll($a = false) {
 		// read all the elements
 		$r = array();
 		while($line = $this->next())

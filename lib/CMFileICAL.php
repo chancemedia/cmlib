@@ -1,6 +1,6 @@
 <?php
 
-include_once('CMFileParser.php');
+include_once('CMFile.php');
 
 // another change 2
 
@@ -9,7 +9,7 @@ include_once('CMFileParser.php');
  * 
  * @author Elliot Chance
  */
-class CMFileICAL implements CMFileParser {
+class CMFileICAL implements CMFile {
 	
 	/**
 	 * @brief The version of this class.
@@ -243,7 +243,7 @@ class CMFileICAL implements CMFileParser {
 	}
 	
 	/**
-	 * @see CMFileParser::isCaching()
+	 * @see CMFile::isCaching()
 	 */
 	public function isCaching() {
 		return false;
@@ -264,7 +264,7 @@ class CMFileICAL implements CMFileParser {
 	}
 	
 	/**
-	 * @see CMFileParser::finishWriteFile()
+	 * @see CMFile::finishWriteFile()
 	 */
 	public function finishWriteFile() {
 		return false;

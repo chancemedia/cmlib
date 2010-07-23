@@ -1,6 +1,6 @@
 <?php
 
-include_once('CMFileParser.php');
+include_once('CMFile.php');
 include_once('CMError.php');
 
 /**
@@ -8,7 +8,7 @@ include_once('CMError.php');
  * 
  * @author Elliot Chance
  */
-class CMFileVCF extends CMError implements CMFileParser {
+class CMFileVCF extends CMError implements CMFile {
 	
 	/**
 	 * @brief The version of this class.
@@ -248,7 +248,7 @@ class CMFileVCF extends CMError implements CMFileParser {
 	}
 	
 	/**
-	 * @see CMFileParser::isCaching()
+	 * @see CMFile::isCaching()
 	 */
 	public function isCaching() {
 		$this->throwWarning("isCaching() is not implemented for CMFileICAL");
@@ -272,7 +272,7 @@ class CMFileVCF extends CMError implements CMFileParser {
 	}
 	
 	/**
-	 * @see CMFileParser::finishWriteFile()
+	 * @see CMFile::finishWriteFile()
 	 */
 	public function finishWriteFile() {
 		$this->throwWarning("finishWriteFile() is not implemented for CMFileICAL");
