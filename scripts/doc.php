@@ -7,7 +7,7 @@ system("git checkout master");
 system("/Applications/Doxygen.app/Contents/Resources/doxygen Doxyfile");
 
 // because doc/ is not being tracked by master we can switch branches and keep doc/ intact
-system("git checkout gh-pages");
+system("git checkout --force gh-pages");
 
 // commit changes
 system("git add . && git commit -a -m \"Docs - `date`\"");
