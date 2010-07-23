@@ -41,6 +41,10 @@
  * 		<td>Non-associative array.</td>
  * 	</tr>
  * 	<tr>
+ * 		<td>\c 'row'</td>
+ * 		<td>Associative and non-associative array.</td>
+ * 	</tr>
+ * 	<tr>
  * 		<td>\c 'pair'</td>
  * 		<td>First and second column become key-value.</td>
  * 	</tr>
