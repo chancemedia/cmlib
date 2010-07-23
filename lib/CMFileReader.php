@@ -9,10 +9,6 @@ interface CMFileReader extends CMClass {
 	
 	function readString($str, $a = false);
 	
-	function readNext();
-	
-	function readAll($a = false);
-	
 }
 
 ?>

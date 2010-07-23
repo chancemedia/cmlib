@@ -5,22 +5,23 @@ include_once("../lib/CMFileCSV.php");
 
 function getTestUnits() {
 	die(implode(';', array(
-		'test1=iterateFile() and next()',
+		'test1=readFile() and readNext()',
 		'test2=Field mapping',
 		'test3=prepareWriteFile(), add() and finishWriteFile()',
-		'test4=iterateString() and next()',
-		'test5=readFile()',
-		'test6=readString()',
+		'test4=readString() and readNext()',
+		'test5=readFile() and readAll()',
+		'test6=readString() and readAll()',
+		'test7=isBinary() and isMultiRecord()',
 	)));
 }
 
 function test1() {
 	$csv = new CMFileCSV();
-	if(!$csv->iterateFile('tmp/csv1.csv'))
+	if(!$csv->readFile('tmp/csv1.csv'))
 		die("Unable to read file!");
 	
-	$line1 = $csv->next();
-	$line2 = $csv->next();
+	$line1 = $csv->readNext();
+	$line2 = $csv->readNext();
 	
 	// Array (
 	//     [0] => begin_ip
@@ -46,10 +47,10 @@ function test1() {
 function test2() {
 	$fields = array('begin_ip', 'end_ip', 'begin_num', 'end_num', 'country', 'name');
 	$csv = new CMFileCSV($fields);
-	if(!$csv->iterateFile('tmp/csv1.csv', array('skip' => 1)))
+	if(!$csv->readFile('tmp/csv1.csv', array('skip' => 1)))
 		die("Unable to read file!");
 	
-	$line1 = $csv->next();
+	$line1 = $csv->readNext();
 	
 	// Array (
 	//     [begin_ip] => 61.88.0.0
@@ -76,19 +77,19 @@ function test3() {
 	);
 	
 	foreach($data as $d)
-		$csv->add($d);
+		$csv->writeNext($d);
+	$csv->finishWriteFile();
 	
-	// Example 4: Rewriting a CSV file.
+	// rewriting a CSV file.
 	$csvIn = new CMFileCSV();
 	$csvOut = new CMFileCSV();
-	if(!$csvIn->iterateFile('tmp/csv1.csv') || !$csvOut->prepareWriteFile('tmp/csv3.csv'))
+	if(!$csvIn->readFile('tmp/csv1.csv') || !$csvOut->prepareWriteFile('tmp/csv3.csv'))
 		die("One of the files could not be opened");
 	
 	// add an ID field at the beginning
-	$csvOut->add(array_merge(array('id'), $csvIn->next()));
-	for($i = 1; $line = $csvIn->next(); ++$i) {
-	  $csvOut->add(array_merge(array($i), $line));
-	}
+	$csvOut->writeNext(array_merge(array('id'), $csvIn->readNext()));
+	for($i = 1; $line = $csvIn->readNext(); ++$i)
+		$csvOut->writeNext(array_merge(array($i), $line));
 	$csvOut->finishWriteFile();
 	
 	pass();
@@ -103,11 +104,11 @@ function test4() {
 		"Joe,Bloggs,joe@bloggs.com"
 	));
 	
-	if(!$csv->iterateString($csv_string, array('skip' => 1)))
+	if(!$csv->readString($csv_string, array('skip' => 1)))
 		die("Unable to read file!");
 		
 	$final = array();
-	while($line = $csv->next())
+	while($line = $csv->readNext())
 		$final[] = $line;
 		
 	$pass1 = (count($final) == 2);
@@ -118,8 +119,13 @@ function test4() {
 
 function test5() {
 	$csv = new CMFileCSV();
+	$csv->readFile('tmp/csv1.csv');
 	
-	pass(count($csv->readFile('tmp/csv1.csv')) == 4);
+	$count = 0;
+	while($csv->readNext())
+		++$count;
+	
+	pass($count == 4);
 }
 
 function test6() {
@@ -130,8 +136,18 @@ function test6() {
 		"Elliot,Chance,elliot@chancemedia.com",
 		"Joe,Bloggs,joe@bloggs.com"
 	));
+	$csv->readString($csv_string);
 	
-	pass(count($csv->readString($csv_string)) == 3);
+	$count = 0;
+	while($csv->readNext())
+		++$count;
+	
+	pass($count == 3);
+}
+
+function test7() {
+	$csv = new CMFileCSV();
+	pass(!$csv->isBinary() && $csv->isMultiRecord());
 }
 
 include_once('tester.php');

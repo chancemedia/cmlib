@@ -1,6 +1,8 @@
 <?php
 
 include_once('CMFile.php');
+include_once('CMFileMultiReader.php');
+include_once('CMFileMultiWriter.php');
 include_once('CMError.php');
 
 if(!function_exists('str_getcsv')) {
@@ -72,7 +74,7 @@ if(!function_exists('str_getcsv')) {
  * @author Elliot Chance
  * @since 1.0
  */
-class CMFileCSV extends CMError implements CMFile, CMFileReader {
+class CMFileCSV extends CMError implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	
 	/**
 	 * @brief The version of this class.
@@ -179,7 +181,7 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 		// skip lines
 		if(isset($a['skip'])) {
 			for($i = 0; $i < $a['skip']; ++$i)
-				$this->next();
+				$this->readNext();
 		}
 		
 		return true;
@@ -209,19 +211,17 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 		// skip lines
 		if(isset($a['skip'])) {
 			for($i = 0; $i < $a['skip']; ++$i)
-				$this->next();
+				$this->readNext();
 		}
 		
 		return true;
 	}
 	
-	public function readAll($a = false) {
-		// read all the elements
-		$r = array();
-		while($line = $this->next())
-			$r[] = $line;
-		
-		return $r;
+	/**
+	 * @brief Multirecord file type.
+	 */
+	public function isMultiRecord() {
+		return true;
 	}
 	
 	/**
@@ -236,28 +236,6 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	public function writeFile($uri, $a = false) {
 		$this->throwWarning("writeFile() is not implemented for CMFileCSV");
 		return false;
-	}
-	
-	/**
-	 * @brief Parse one ore more CSV lines.
-	 * 
-	 * Parse an entire string and return a two-dimentional array of parsed data.
-	 * 
-	 * @param $str Input string to parse.
-	 * @param $a An associative array of extra options.
-	 * @return \false on error, otherwise an array.
-	 */
-	public function readString($str, $a = false) {
-		// open the file
-		if($this->iterateString($str, $a) === false)
-			return false;
-			
-		// read all the elements
-		$r = array();
-		while($line = $this->next())
-			$r[] = $line;
-		
-		return $r;
 	}
 	
 	/**
@@ -333,7 +311,7 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	 * @return \false if not available or the end of the iteration has been reached. Otherwise the
 	 *         string, number, array, object etc of the next iteration.
 	 */
-	public function next($options = false) {
+	public function readNext($options = false) {
 		// iterateFile
 		if(is_resource($this->f) && (get_resource_type($this->f) == 'stream' ||
 		   get_resource_type($this->f) == 'file')) {
@@ -431,32 +409,6 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	}
 	
 	/**
-	 * @brief Check if this class instance is in caching mode.
-	 * 
-	 * CMFileCSV does not support caching so this function will always return \false.
-	 * 
-	 * @return \false.
-	 * @see setCache()
-	 */
-	public function isCaching() {
-		return false;
-	}
-	
-	/**
-	 * @brief Enable/disable caching for this instance.
-	 * 
-	 * CMFileCSV does not support file caching so this invoked method will be ignored.
-	 * 
-	 * @param $mode \true or \false for on and off respectivly.
-	 * @return \false.
-	 * @see isCaching()
-	 */
-	public function setCache($mode = true) {
-		$this->throwWarning("setCache() is not implemented for CMFileCSV");
-		return false;
-	}
-	
-	/**
 	 * @brief Immediatly write a line to the output CSV file.
 	 * 
 	 * @note Before you can invoke this function you need to invoke prepareWriteFile().
@@ -475,7 +427,7 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	 * @return \true if the new line was successfully purged to the output file, otherwise \false.
 	 * @see prepareWriteFile()
 	 */
-	public function add($item = false) {
+	public function writeNext($item = false) {
 		// we need an open file handle
 		if($this->f === false)
 			return $this->throwError("Item could not be added");
@@ -501,7 +453,7 @@ class CMFileCSV extends CMError implements CMFile, CMFileReader {
 	 * @return Always \true.
 	 * @see prepareWriteFile()
 	 */
-	public function finishWriteFile() {
+	public function finishWriteFile($a = array()) {
 		if($this->f !== false)
 			fclose($this->f);
 		return true;

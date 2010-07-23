@@ -2,17 +2,16 @@
 
 include_once('CMClass.php');
 
+
 interface CMFileWriter extends CMClass {
 	
 	function prepareWriteFile($file);
 	
-	function writeString();
+	function writeString($a = false);
 	
-	function writeNext($item);
+	function writeFile($uri, $a = false);
 	
-	function writeAll();
-	
-	function finishWriteFile($file);
+	function finishWriteFile($a = array());
 	
 }
 
