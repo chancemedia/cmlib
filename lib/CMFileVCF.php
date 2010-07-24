@@ -105,7 +105,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $a Extra attributes.
 	 */
 	public function readFile($url, $a = false) {
-		$this->throwWarning("readFile() is not implemented for CMFileICAL");
+		$this->throwWarning("readFile() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -116,7 +116,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $a Extra attributes.
 	 */
 	public function writeFile($url, $a = false) {
-		$this->throwWarning("writeFile() is not implemented for CMFileICAL");
+		$this->throwWarning("writeFile() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -126,7 +126,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $a Extra attributes.
 	 */
 	public function writeString($a = false) {
-		$this->throwWarning("writeString() is not implemented for CMFileICAL");
+		$this->throwWarning("writeString() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -192,7 +192,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $options
 	 */
 	public function next($options = false) {
-		$this->throwWarning("next() is not implemented for CMFileICAL");
+		$this->throwWarning("next() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -205,7 +205,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 *         \false.
 	 */
 	public function iterateFile($url, $a = false) {
-		$this->throwWarning("iterateFile() is not implemented for CMFileICAL");
+		$this->throwWarning("iterateFile() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -216,7 +216,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $a Extra attributes.
 	 */
 	public function iterateString($url, $a = false) {
-		$this->throwWarning("iterateString() is not implemented for CMFileICAL");
+		$this->throwWarning("iterateString() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -243,31 +243,7 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @param $a
 	 */
 	public function prepareWriteFile($uri, $a = false) {
-		$this->throwWarning("prepareWriteFile() is not implemented for CMFileICAL");
-		return false;
-	}
-	
-	/**
-	 * @see CMFile::isCaching()
-	 */
-	public function isCaching() {
-		$this->throwWarning("isCaching() is not implemented for CMFileICAL");
-		return false;
-	}
-	
-	/**
-	 * @param $mode
-	 */
-	public function setCache($mode = true) {
-		$this->throwWarning("setCache() is not implemented for CMFileICAL");
-		return false;
-	}
-	
-	/**
-	 * @param $item
-	 */
-	public function add($item = false) {
-		$this->throwWarning("add() is not implemented for CMFileICAL");
+		$this->throwWarning("prepareWriteFile() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -275,8 +251,15 @@ class CMFileVCF extends CMError implements CMFile {
 	 * @see CMFile::finishWriteFile()
 	 */
 	public function finishWriteFile() {
-		$this->throwWarning("finishWriteFile() is not implemented for CMFileICAL");
+		$this->throwWarning("finishWriteFile() is not implemented for CMFileVCF");
 		return false;
+	}
+	
+	/**
+	 * @brief Multirecord file type.
+	 */
+	public function isMultiRecord() {
+		return true;
 	}
 	
 }
