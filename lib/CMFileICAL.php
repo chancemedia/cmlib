@@ -243,31 +243,17 @@ class CMFileICAL implements CMFile {
 	}
 	
 	/**
-	 * @see CMFile::isCaching()
-	 */
-	public function isCaching() {
-		return false;
-	}
-	
-	/**
-	 * @param $mode
-	 */
-	public function setCache($mode = true) {
-		return false;
-	}
-	
-	/**
-	 * @param $item
-	 */
-	public function add($item = false) {
-		return false;
-	}
-	
-	/**
 	 * @see CMFile::finishWriteFile()
 	 */
 	public function finishWriteFile() {
 		return false;
+	}
+	
+	/**
+	 * @brief Multirecord file type.
+	 */
+	public function isMultiRecord() {
+		return true;
 	}
 	
 }
