@@ -164,6 +164,22 @@ class CMVCard implements CMObject {
 	}
 	
 	/**
+	 * @brief Create a vCard and return the result.
+	 * 
+	 * @param $values
+	 */
+	public static function CreateVCard($values) {
+		$r = "BEGIN:VCARD\n";
+		foreach($values as $k => $v) {
+			$r .= strtoupper(trim(str_replace(':', '\:', $k)));
+			if(is_array($v['attr']))
+				$r .= ';' . implode(';', $v['attr']);
+			$r .= ":" . str_replace(':', '\:', $v['value']) . "\n";
+		}
+		return $r . "END:VCARD\n";
+	}
+	
+	/**
 	 * @brief Return the string value of this object.
 	 */
 	public function __toString() {

@@ -8,7 +8,7 @@ include_once('CMError.php');
  * 
  * @author Elliot Chance
  */
-class CMFileVCF extends CMError implements CMFile {
+class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	
 	/**
 	 * @brief The version of this class.
@@ -29,19 +29,15 @@ class CMFileVCF extends CMError implements CMFile {
 	}
 	
 	/**
-	 * @brief vCard stack
-	 * 
-	 * Files or strings can contain multiple VCARD entities, for this reason we use an array to
-	 * represent all of the vCards on the stack. You may edit this stack to make changed to the
-	 * vCards before purging them to a file or string with writeFile() or writeString() respectivly.
-	 */
-	public $vCards = array();
-	
-	/**
 	 * @brief Empty constructor creates a new blank vCard stack
 	 */
 	public function CMFileVCF() {
 	}
+	
+	/**
+	 * @brief Internal file handle.
+	 */
+	private $f = false;
 	
 	/**
 	 * @brief Read one or more vCards from a string.
@@ -83,22 +79,6 @@ class CMFileVCF extends CMError implements CMFile {
 	}
 	
 	/**
-	 * @brief Create a vCard and return the result.
-	 * 
-	 * @param $values
-	 */
-	public static function CreateVCard($values) {
-		$r = "BEGIN:VCARD\n";
-		foreach($values as $k => $v) {
-			$r .= strtoupper(trim(str_replace(':', '\:', $k)));
-			if(is_array($v['attr']))
-				$r .= ';' . implode(';', $v['attr']);
-			$r .= ":" . str_replace(':', '\:', $v['value']) . "\n";
-		}
-		return $r . "END:VCARD\n";
-	}
-	
-	/**
 	 * @brief Read entire vCard file.
 	 * 
 	 * @param $url Valid PHP URL, relative or absolute path.
@@ -106,27 +86,6 @@ class CMFileVCF extends CMError implements CMFile {
 	 */
 	public function readFile($url, $a = false) {
 		$this->throwWarning("readFile() is not implemented for CMFileVCF");
-		return false;
-	}
-	
-	/**
-	 * @brief Write entire vCard file.
-	 * 
-	 * @param $url Valid PHP URL, relative or absolute path.
-	 * @param $a Extra attributes.
-	 */
-	public function writeFile($url, $a = false) {
-		$this->throwWarning("writeFile() is not implemented for CMFileVCF");
-		return false;
-	}
-	
-	/**
-	 * @brief Write all vCards on the stack to an output string.
-	 * 
-	 * @param $a Extra attributes.
-	 */
-	public function writeString($a = false) {
-		$this->throwWarning("writeString() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -191,32 +150,8 @@ class CMFileVCF extends CMError implements CMFile {
 	 * 
 	 * @param $options
 	 */
-	public function next($options = false) {
-		$this->throwWarning("next() is not implemented for CMFileVCF");
-		return false;
-	}
-	
-	/**
-	 * @brief Iterate through input file.
-	 * 
-	 * @param $url
-	 * @param $a Extra attributes.
-	 * @return \true if the file handle was successfully created and is ready to start reading, otherwise
-	 *         \false.
-	 */
-	public function iterateFile($url, $a = false) {
-		$this->throwWarning("iterateFile() is not implemented for CMFileVCF");
-		return false;
-	}
-	
-	/**
-	 * @brief Iterate through string.
-	 * 
-	 * @param $url
-	 * @param $a Extra attributes.
-	 */
-	public function iterateString($url, $a = false) {
-		$this->throwWarning("iterateString() is not implemented for CMFileVCF");
+	public function readNext($options = false) {
+		$this->throwWarning("readNext() is not implemented for CMFileVCF");
 		return false;
 	}
 	
@@ -239,12 +174,38 @@ class CMFileVCF extends CMError implements CMFile {
 	}
 	
 	/**
-	 * @param $uri
-	 * @param $a
+	 * @brief Prepare a vCard file for writing.
+	 * 
+	 * @warning This method will use the default 'w' open method which will ERASE a file if it already
+	 *          exists. If you want to append to a file make sure you provide the 'append' option in
+	 *          $a like:
+	 *          @code
+	 *          $vcf->writeFile("outfile.vcf", array('append' => true));
+	 *          @endcode
+	 * 
+	 * @throwsWarning If the output file handle could not be prepared. The \c 'uri' attribute will
+	 *                contain the \p $uri passed to this method.
+	 * 
+	 * @param $uri Valid PHP URL, relative or absolute path.
+	 * @param $a An associative array of extra options.
+	 * @return \true if the file handle was open sucessfully and the file is ready to be written to,
+	 *         otherwise \false.
 	 */
 	public function prepareWriteFile($uri, $a = false) {
-		$this->throwWarning("prepareWriteFile() is not implemented for CMFileVCF");
-		return false;
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// this method only has to open the writing file handle
+		if(isset($a['append']))
+			$this->f = fopen($uri, "a+");
+		else $this->f = fopen($uri, "w");
+		
+		if($this->f === false)
+			return $this->throwWarning("The output file could not be opened",
+						array('uri' => $uri));
+		
+		return $this->f !== false;
 	}
 	
 	/**
@@ -260,6 +221,10 @@ class CMFileVCF extends CMError implements CMFile {
 	 */
 	public function isMultiRecord() {
 		return true;
+	}
+	
+	function writeNext($item) {
+		return false;
 	}
 	
 }

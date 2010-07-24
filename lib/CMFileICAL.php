@@ -178,7 +178,7 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	 *          exists. If you want to append to a file make sure you provide the 'append' option in
 	 *          $a like:
 	 *          @code
-	 *          $ical->writeFile("outfile.csv", array('append' => true));
+	 *          $ical->writeFile("outfile.ical", array('append' => true));
 	 *          @endcode
 	 * 
 	 * @throwsWarning If the output file handle could not be prepared. The \c 'uri' attribute will
