@@ -9,8 +9,8 @@ function getTestUnits() {
 		'test2=Field mapping',
 		'test3=prepareWriteFile(), add() and finishWriteFile()',
 		'test4=readString() and readNext()',
-		'test5=readFile() and readAll()',
-		'test6=readString() and readAll()',
+		'test5=readFile() and read all',
+		'test6=readString() and read all',
 		'test7=isBinary() and isMultiRecord()',
 	)));
 }

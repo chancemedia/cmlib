@@ -225,33 +225,6 @@ class CMFileCSV extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	}
 	
 	/**
-	 * @brief Not available.
-	 * 
-	 * See cmfileparser_cache for more information.
-	 *
-	 * @param $uri A valid PHP URL, relative or absolute path.
-	 * @param $a Extra options.
-	 * @return \false.
-	 */
-	public function writeFile($uri, $a = false) {
-		$this->throwWarning("writeFile() is not implemented for CMFileCSV");
-		return false;
-	}
-	
-	/**
-	 * @brief Not available.
-	 * 
-	 * See cmfileparser_cache for more information.
-	 * 
-	 * @param $a An associative array of extra options.
-	 * @return \false.
-	 */
-	public function writeString($a = false) {
-		$this->throwWarning("writeString() is not implemented for CMFileCSV");
-		return false;
-	}
-	
-	/**
 	 * @brief The standard file extensions for this file parser.
 	 * 
 	 * The first element in the array returned is assumed to be the default file extension.

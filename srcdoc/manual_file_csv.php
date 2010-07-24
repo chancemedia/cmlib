@@ -8,6 +8,7 @@
  * -# \ref manual_file_csv_read
  * -# \ref manual_file_csv_readmap
  * -# \ref manual_file_csv_write
+ * -# \ref manual_file_csv_rewrite
  * -# \ref manual_file_csv_format
  * -# \ref manual_file_csv_options
  * 
@@ -15,10 +16,10 @@
  * @section manual_file_csv_read Reading a CSV File
  * @code
  * $csv = new CMFileCSV();
- * if(!$csv->iterateFile('csv1.csv'))
+ * if(!$csv->readFile('csv1.csv'))
  *   die("Unable to read file!");
  * 
- * while($line = $csv->next()) {
+ * while($line = $csv->readNext()) {
  *   print_r($line);
  * }
  * 
@@ -46,8 +47,8 @@
  * @code
  * $fields = array('begin_ip', 'end_ip', 'begin_num', 'end_num', 'country', 'name');
  * $csv = new CMFileCSV($fields);
- * if(!$csv->iterateFile('csv1.csv', array('skip' => 1)))
- * die("Unable to read file!");
+ * if(!$csv->readFile('csv1.csv', array('skip' => 1)))
+ *   die("Unable to read file!");
  * 
  * while($line = $csv->next()) {
  *   print_r($line);
@@ -78,21 +79,25 @@
  * );
  * 
  * foreach($data as $d)
- *   $csv->add($d);
+ *   $csv->writeNext($d);
+ * 
+ * // clean and close the file handle
+ * $csv->finishWriteFile();
  * @endcode
  * 
- * @section cmfilecsv_example4 Example 4: Rewriting a CSV file.
+ * @section manual_file_csv_rewrite Rewriting a CSV file.
  * @code
  * $csvIn = new CMFileCSV();
  * $csvOut = new CMFileCSV();
- * if(!$csvIn->iterateFile('csv1.csv') || !$csvOut->prepareWriteFile('csv3.csv'))
+ * if(!$csvIn->readFile('csv1.csv') || !$csvOut->prepareWriteFile('csv3.csv'))
  *   die("One of the files could not be opened");
  * 
  * // add an ID field at the beginning
- * $csvOut->add(array_merge(array('id'), $csvIn->next()));
- * for($i = 1; $line = $csvIn->next(); ++$i) {
- *   $csvOut->add(array_merge(array($i), $line));
+ * $csvOut->writeNext(array_merge(array('id'), $csvIn->readNext()));
+ * for($i = 1; $line = $csvIn->readNext(); ++$i) {
+ *   $csvOut->writeNext(array_merge(array($i), $line));
  * }
+ * 
  * $csvOut->finishWriteFile();
  * 
  * // id,begin_ip,end_ip,begin_num,end_num,country,name
@@ -103,8 +108,10 @@
  * 
  * 
  * @section manual_file_csv_format Changing the Input/Output Delimiter and Enclosure
+ * 
  * These attributes can be accessed directly within your CMFileCSV instance, the change affect
  * immediatly even if you are in the middle of reading/write a CSV file.
+ * 
  * @code
  * $csv = new CMFileCSV();
  * $csv->delimiter = "\t"; // change the column delimiter to a tab
@@ -112,7 +119,7 @@
  * @endcode
  * 
  * 
- * @section manual_file_csv_options Options for Reading CSV Files
+ * @section manual_file_csv_options Options for CSV Files
  * <table>
  *   <tr>
  *     <th>Name</th>
