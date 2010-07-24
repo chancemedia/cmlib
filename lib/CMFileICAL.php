@@ -9,7 +9,7 @@ include_once('CMFile.php');
  * 
  * @author Elliot Chance
  */
-class CMFileICAL implements CMFile {
+class CMFileICAL implements CMFile, CMFileMultiReader {
 	
 	/**
 	 * @brief The version of this class.
@@ -46,7 +46,7 @@ class CMFileICAL implements CMFile {
 	 * 
 	 * @see error()
 	 */
-	public function iterateFile($uri, $a = false) {
+	public function readFile($uri, $a = false) {
 		return false;
 	}
 	
@@ -65,7 +65,7 @@ class CMFileICAL implements CMFile {
 	 * 
 	 * @see error()
 	 */
-	public function iterateString($str, $a = false) {
+	public function readString($str, $a = false) {
 		return false;
 	}
 	
@@ -98,60 +98,6 @@ class CMFileICAL implements CMFile {
 		$c .= "END:VCALENDAR\n";
 		
 		return $c;
-	}
-	
-	/**
-	 * @brief Read an iCal file.
-	 * 
-	 * @warning This method has not been implemented yet.
-	 * 
-	 * @param $url Valid PHP URL, relative or absolute path.
-	 * @param $a Extra attributes.
-	 * @return \false
-	 */
-	public function readFile($url, $a = false) {
-		return false;
-	}
-	
-	/**
-	 * @brief Write iCal file.
-	 * 
-	 * @warning This method has not been implemented yet.
-	 * 
-	 * @param $url Valid PHP URL, relative or absolute path.
-	 * @param $a Extra attributes.
-	 * @return \false
-	 */
-	public function writeFile($url, $a = false) {
-		return false;
-	}
-	
-	/**
-	 * @brief Parse one ore more iCal items.
-	 * 
-	 * @warning This method has not been implemented yet.
-	 * 
-	 * @param $str Input string to parse.
-	 * @param $a Extra attributes.
-	 * @return \false.
-	 */
-	public function readString($str, $a = false) {
-		return false;
-	}
-	
-	/**
-	 * @brief Write full output to a string.
-	 * 
-	 * This method is supposed to work like writeFile() but returning the value instead of writing
-	 * it to an output file/URI.
-	 * 
-	 * @warning This method has not been implemented yet.
-	 * 
-	 * @param $a Extra attributes.
-	 * @return \false.
-	 */
-	public function writeString($a = false) {
-		return false;
 	}
 	
 	/**
@@ -212,7 +158,7 @@ class CMFileICAL implements CMFile {
 	 * @return \false if not avilable or the end of the iteration has been reached. Otherwise the
 	 *         string, number, array, object etc of the next iteration.
 	 */
-	public function next($options = false) {
+	public function readNext($options = false) {
 		return false;
 	}
 	
@@ -235,11 +181,37 @@ class CMFileICAL implements CMFile {
 	}
 	
 	/**
-	 * @param $uri
-	 * @param $a
+	 * @brief Prepare a iCal file for writing.
+	 * 
+	 * @warning This method will use the default 'w' open method which will ERASE a file if it already
+	 *          exists. If you want to append to a file make sure you provide the 'append' option in
+	 *          $a like:
+	 *          @code
+	 *          $ical->writeFile("outfile.csv", array('append' => true));
+	 *          @endcode
+	 * 
+	 * @throwsWarning If the output file handle could not be prepared. The \c 'uri' attribute will
+	 *                contain the \p $uri passed to this method.
+	 * 
+	 * @param $uri Valid PHP URL, relative or absolute path.
+	 * @param $a An associative array of extra options.
+	 * @return \true if the file handle was open sucessfully and the file is ready to be written to,
+	 *         otherwise \false.
 	 */
 	public function prepareWriteFile($uri, $a = false) {
-		return false;
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// this method only has to open the writing file handle
+		if(isset($a['append']))
+			$this->f = fopen($uri, "a+");
+		else $this->f = fopen($uri, "w");
+		
+		if($this->f === false)
+			return $this->throwWarning("The output file could not be opened", array('uri' => $uri));
+		
+		return $this->f !== false;
 	}
 	
 	/**
