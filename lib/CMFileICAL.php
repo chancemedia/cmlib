@@ -68,12 +68,6 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	/**
 	 * @brief Input a string in peices.
 	 * 
-	 * This method works in the same way as iterateFile() but works with the string provided rather
-	 * than an input file.
-	 * 
-	 * @note If you attempt to use readString() the entire string will be processed into RAM
-	 * according to the action of that class and how it stores the data.
-	 * 
 	 * @param $str Input string.
 	 * @param $a Extra attributes.
 	 * @return \true on successful completion, otherwise \false. See error() for a \false return.
@@ -81,7 +75,20 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	 * @see error()
 	 */
 	public function readString($str, $a = false) {
-		return false;
+		// assign the string to our internal handle with a trailing line, this is very important
+		$this->f = "$str\n";
+		
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// skip lines
+		if(isset($a['skip'])) {
+			for($i = 0; $i < $a['skip']; ++$i)
+				$this->readNext();
+		}
+		
+		return true;
 	}
 	
 	/**
