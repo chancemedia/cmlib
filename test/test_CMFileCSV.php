@@ -7,7 +7,7 @@ function getTestUnits() {
 	die(implode(';', array(
 		'test1=readFile() and readNext()',
 		'test2=Field mapping',
-		'test3=prepareWriteFile(), add() and finishWriteFile()',
+		'test3=prepareWriteFile(), writeNext() and finishWriteFile()',
 		'test4=readString() and readNext()',
 		'test5=readFile() and read all',
 		'test6=readString() and read all',
