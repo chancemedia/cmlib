@@ -209,11 +209,19 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	}
 	
 	/**
-	 * @see CMFile::finishWriteFile()
+	 * @brief Close and flush the writing file handle.
+	 * 
+	 * This is always recommended, but in some cases when the PHP script finishes the file handles will
+	 * be flushed and closed for you. Opening a read file handle on a file that has no been closed yet
+	 * will cause problems.
+	 * 
+	 * @return Always \true.
+	 * @see prepareWriteFile()
 	 */
-	public function finishWriteFile() {
-		$this->throwWarning("finishWriteFile() is not implemented for CMFileVCF");
-		return false;
+	public function finishWriteFile($a = array()) {
+		if($this->f !== false)
+			fclose($this->f);
+		return true;
 	}
 	
 	/**
