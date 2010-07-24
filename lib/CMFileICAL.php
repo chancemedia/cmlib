@@ -37,13 +37,6 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	/**
 	 * @brief Input a file in peices.
 	 * 
-	 * The purpose of this method is when you are dealing with large input files. This method
-	 * simply opens the file and requires the code to invoke next() as needed to deal with each
-	 * line or object.
-	 * 
-	 * @note If you attempt to use readFile() the entire file will be processed into RAM according
-	 * to the action of that class and how it stores the data.
-	 * 
 	 * @param $uri URI can be a URL, relative or absolute path.
 	 * @param $a Extra attributes.
 	 * @return \true if the file handle was successfully created and is ready to start reading, otherwise
@@ -52,7 +45,24 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	 * @see error()
 	 */
 	public function readFile($uri, $a = false) {
-		return false;
+		// all we have to do with this function is setup the input file handle
+		$this->f = fopen($uri, "r");
+		if(!$this->f) {
+			$this->throwError("File could not be opened", array('uri' => $uri));
+			return false;
+		}
+			
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// skip lines
+		if(isset($a['skip'])) {
+			for($i = 0; $i < $a['skip']; ++$i)
+				$this->readNext();
+		}
+		
+		return true;
 	}
 	
 	/**
