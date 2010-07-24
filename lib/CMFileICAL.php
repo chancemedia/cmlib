@@ -2,14 +2,12 @@
 
 include_once('CMFile.php');
 
-// another change 2
-
 /**
  * @brief This class is for iCal items.
  * 
  * @author Elliot Chance
  */
-class CMFileICAL implements CMFile, CMFileMultiReader {
+class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	
 	/**
 	 * @brief The version of this class.
@@ -28,6 +26,11 @@ class CMFileICAL implements CMFile, CMFileMultiReader {
 	public static function Since() {
 		return "1.0";
 	}
+	
+	/**
+	 * @brief Internal file handle.
+	 */
+	private $f = false;
 	
 	/**
 	 * @brief Input a file in peices.
@@ -215,10 +218,19 @@ class CMFileICAL implements CMFile, CMFileMultiReader {
 	}
 	
 	/**
-	 * @see CMFile::finishWriteFile()
+	 * @brief Close and flush the writing file handle.
+	 * 
+	 * This is always recommended, but in some cases when the PHP script finishes the file handles will
+	 * be flushed and closed for you. Opening a read file handle on a file that has no been closed yet
+	 * will cause problems.
+	 * 
+	 * @return Always \true.
+	 * @see prepareWriteFile()
 	 */
-	public function finishWriteFile() {
-		return false;
+	public function finishWriteFile($a = array()) {
+		if($this->f !== false)
+			fclose($this->f);
+		return true;
 	}
 	
 	/**
@@ -226,6 +238,10 @@ class CMFileICAL implements CMFile, CMFileMultiReader {
 	 */
 	public function isMultiRecord() {
 		return true;
+	}
+	
+	function writeNext($item) {
+		return false;
 	}
 	
 }
