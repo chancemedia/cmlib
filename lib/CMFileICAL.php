@@ -135,10 +135,17 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return array('text/calendar');
 	}
 	
-	public function escapeString($str) {
+	public function unescapeString($str) {
 		$str = str_replace('\n', "\n", $str);
 		$str = str_replace('\t', "\t", $str);
 		$str = str_replace('\r', "\r", $str);
+		return $str;
+	}
+	
+	public function escapeString($str) {
+		$str = str_replace("\n", '\n', $str);
+		$str = str_replace("\t", '\t', $str);
+		$str = str_replace("\r", '\r', $str);
 		return $str;
 	}
 	
@@ -163,6 +170,7 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		$r = false;
 		$event = false;
 		$depth = 0;
+		$child = new CMVItem("");
 		if($this->f === false || feof($this->f))
 			return $r;
 		
@@ -183,11 +191,13 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 				if($depth == 0)
 					$event = new CMVItem($value);
 				else
-					$event->children[] = new CMVItem($value);
+					$child = new CMVItem($value);
 				++$depth;
 			} elseif($key == "END") {
 				if($depth == 1)
 					$r->addItem($event);
+				else
+					$event->children[] = $child;
 				--$depth;
 			}
 				
@@ -205,15 +215,15 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 					$a2[substr($item, 0, $pos)] = substr($item, $pos + 1);
 				}
 				
-				$value = $this->escapeString($value);
+				$value = $this->unescapeString($value);
 				if($depth == 1)
 					$event->addAttribute($a[0], $value, $a2);
 				else
-					$event->children[count($event->children) - 1]->addAttribute($a[0], $value, $a2);
+					$child->addAttribute($a[0], $value, $a2);
 			}
 		}
 		
-		return true;
+		return false;
 	}
 	
 	/**
@@ -284,7 +294,28 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return true;
 	}
 	
-	function writeNext($item) {
+	private function writeNextItem($it) {
+		fwrite($this->f, "BEGIN:" . $it->type . "\n");
+		foreach($it->attr as $k => $vs) {
+			foreach($vs as $v) {
+				fwrite($this->f, $k);
+				foreach($v as $k2 => $v2) {
+					if($k2 != "VALUE")
+						fwrite($this->f, ";$k2=$v2");
+				}
+				fwrite($this->f, ":" . $this->escapeString($v['VALUE']) . "\n");
+			}
+		}
+			
+		if(count($it->children) > 0) {
+			foreach($it->children as $item)
+				$this->writeNextItem($item);
+		}
+				
+		fwrite($this->f, "END:" . $it->type . "\n");
+	}
+	
+	public function writeNext($item) {
 		if($this->f === false)
 			return false;
 			
@@ -292,18 +323,8 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		fwrite($this->f, "VERSION:" . $item->version . "\n");
 		fwrite($this->f, "PRODID:" . $item->prodID . "\n");
 		
-		foreach($item->items as $it) {
-			fwrite($this->f, "BEGIN:" . $it->type . "\n");
-			foreach($it->attr as $k => $v) {
-				fwrite($this->f, $k);
-				foreach($v as $k2 => $v2) {
-					if($k2 != "VALUE")
-						fwrite($this->f, ";$k2=$v2");
-				}
-				fwrite($this->f, ":" . $v['VALUE'] . "\n");
-			}
-			fwrite($this->f, "END:" . $it->type . "\n");
-		}
+		foreach($item->items as $it)
+			$this->writeNextItem($it);
 		
 		fwrite($this->f, "END:VCALENDAR\n");
 	}

@@ -13,9 +13,10 @@ class CMVItem implements CMObject {
 	}
 	
 	public function addAttribute($attr, $value, $a = array()) {
-		$this->attr[strtoupper($attr)]['VALUE'] = $value;
+		$add = array('VALUE' => $value);
 		foreach($a as $k => $v)
-			$this->attr[strtoupper($attr)][strtoupper($k)] = $v;
+			$add[strtoupper($k)] = $v;
+		$this->attr[strtoupper($attr)][] = $add;
 		return true;
 	}
 	
