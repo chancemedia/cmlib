@@ -612,7 +612,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			// we have to use the old mysql driver
 			$this->driver = 'mysql';
 			
-			$this->dbh = mysql_connect($v['host'] . ':' . $v['port'], $v['user'], $v['pass']);
+			$this->dbh = @mysql_connect($v['host'] . ':' . $v['port'], $v['user'], $v['pass']);
 			if(!$this->dbh) {
 				$this->dbh = false;
 				$this->throwError($this->dbh->connect_error,
@@ -620,7 +620,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				return $this;
 			}
 			
-			if(!mysql_select_db($v['db'])) {
+			if(!@mysql_select_db($v['db'])) {
 				$this->throwError($this->dbh->connect_error,
 				  array('number' => $this->dbh->connect_errno, 'message' => $this->dbh->connect_error));
 				return $this;

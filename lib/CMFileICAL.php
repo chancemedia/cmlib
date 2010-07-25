@@ -315,7 +315,7 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		fwrite($this->f, "END:" . $it->type . "\n");
 	}
 	
-	public function writeNext($item) {
+	public function writeNext($item = false) {
 		if($this->f === false)
 			return false;
 			
