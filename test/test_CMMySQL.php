@@ -4,15 +4,10 @@ include_once("../lib/CMMySQL.php");
 include_once("config.php");
 
 global $g_mysql_user, $g_mysql_pass, $g_mysql_host, $g_mysql_name;
-$dbh = new CMMySQL("mysql://$g_mysql_user:$g_mysql_pass@$g_mysql_host/$g_mysql_name");
-
-function init() {
-	// if the database connection was unsuccessful we have to skip this test
-	global $dbh;
-	if(!$dbh->isConnected())
-		skip();
-	pass();
-}
+$err = new CMError();
+$err->setVerboseLevel(CMErrorType::Fatal);
+$dbh = new CMMySQL("mysql://$g_mysql_user:$g_mysql_pass@$g_mysql_host/$g_mysql_name",
+                   array('error' => $err));
 
 function getTestUnits() {
 	die(implode(';', array(
@@ -34,11 +29,17 @@ function getTestUnits() {
 
 function test1() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->isConnected());
 }
 
 function test2() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$q = $dbh->query("CREATE TABLE IF NOT EXISTS cmlib_test (".
                      "id int auto_increment primary key,".
                      "name varchar(255),".
@@ -49,22 +50,34 @@ function test2() {
 
 function test3() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->eraseTable('cmlib_test'));
 }
 
 function test4() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->truncateTable('cmlib_test'));
 }
 
 function test5() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$tables = $dbh->getTableNames();
 	pass(count($tables) > 0);
 }
 
 function test6() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->insert('cmlib_test',
 		array('name' => 'Bob Smith', 'num' => 3.4)
 	) !== false);
@@ -72,30 +85,45 @@ function test6() {
 
 function test7() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$q = $dbh->query("SELECT * FROM cmlib_test");
 	pass($q->success());
 }
 
 function test8() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$q = $dbh->query("SELECT * FROM cmlib_test");
 	pass($q->totalRows() > 0);
 }
 
 function test9() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$q = $dbh->query("SELECT * FROM cmlib_test");
 	pass(count($q->fetch()) > 0);
 }
 
 function test10() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	$q = $dbh->query("SELECT * FROM cmlib_test");
 	pass(count($q->fetchAll()) > 0);
 }
 
 function test11() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->update('cmlib_test',
 		array('name' => 'John Smith', 'num' => 3.7),
 		array('name' => 'Bob Smith', 'num' => 3.4)
@@ -104,6 +132,9 @@ function test11() {
 
 function test12() {
 	global $dbh;
+	if(!$dbh->isConnected())
+		skip();
+	
 	pass($dbh->delete('cmlib_test',
 		array('name' => 'John Smith', 'num' => 3.7)
 	) > 0);

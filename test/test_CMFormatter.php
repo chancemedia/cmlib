@@ -5,7 +5,10 @@ include_once("../lib/CMMySQL.php");
 include_once("config.php");
 
 global $g_mysql_user, $g_mysql_pass, $g_mysql_host, $g_mysql_name;
-$dbh = new CMMySQL("mysql://$g_mysql_user:$g_mysql_pass@$g_mysql_host/$g_mysql_name");
+$err = new CMError();
+$err->setVerboseLevel(CMErrorType::Fatal);
+$dbh = new CMMySQL("mysql://$g_mysql_user:$g_mysql_pass@$g_mysql_host/$g_mysql_name",
+                   array('error' => $err));
 
 function getTestUnits() {
 	die(implode(';', array(

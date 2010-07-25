@@ -75,7 +75,7 @@ class CMTest {
 		$cmd = CMTest::$PHP . ' ' . $this->script . ' init';
 		$result = `$cmd`;
 		if($result == "SKIP") {
-			echo " (SKIPPED)";
+			echo " (SKIPPED)\n\n";
 			return true;
 		}
 		echo "\n";

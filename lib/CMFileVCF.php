@@ -226,7 +226,7 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 		return true;
 	}
 	
-	function writeNext($item) {
+	function writeNext($item = false) {
 		return false;
 	}
 	
