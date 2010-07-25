@@ -2,6 +2,8 @@
 
 include_once('CMFile.php');
 include_once('CMError.php');
+include_once('CMFileMultiReader.php');
+include_once('CMFileMultiWriter.php');
 
 /**
  * @brief vCard files.

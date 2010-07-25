@@ -9,6 +9,7 @@ $tests = array(
 	new CMTest('CMError', "test_CMError.php"),
 	new CMTest('CMFileCSV', "test_CMFileCSV.php"),
 	new CMTest('CMFileICAL', "test_CMFileICAL.php"),
+	new CMTest('CMFileVCF', "test_CMFileVCF.php"),
 	new CMTest('CMFormatter', "test_CMFormatter.php"),
 	new CMTest('CMMySQL', "test_CMMySQL.php"),
 	new CMTest('CMVCard', "test_CMVCard.php"),

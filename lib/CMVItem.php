@@ -1,5 +1,7 @@
 <?php
 
+include_once('CMObject.php');
+
 class CMVItem implements CMObject {
 	
 	public $type = "";
