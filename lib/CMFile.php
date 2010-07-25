@@ -55,11 +55,6 @@ interface CMFile extends CMClass {
 	 */
 	public function isBinary();
 	
-	/**
-	 * @brief Multirecord file type.
-	 */
-	public function isMultiRecord();
-	
 }
 
 ?>

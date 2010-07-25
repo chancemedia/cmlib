@@ -11,7 +11,7 @@ function getTestUnits() {
 		'test4=readString() and readNext()',
 		'test5=readFile() and read all',
 		'test6=readString() and read all',
-		'test7=isBinary() and isMultiRecord()',
+		'test7=isBinary()',
 	)));
 }
 
@@ -147,7 +147,7 @@ function test6() {
 
 function test7() {
 	$csv = new CMFileCSV();
-	pass(!$csv->isBinary() && $csv->isMultiRecord());
+	pass(!$csv->isBinary());
 }
 
 include_once('tester.php');

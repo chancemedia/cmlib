@@ -218,13 +218,6 @@ class CMFileCSV extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	}
 	
 	/**
-	 * @brief Multirecord file type.
-	 */
-	public function isMultiRecord() {
-		return true;
-	}
-	
-	/**
 	 * @brief The standard file extensions for this file parser.
 	 * 
 	 * The first element in the array returned is assumed to be the default file extension.

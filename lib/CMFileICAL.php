@@ -3,6 +3,8 @@
 include_once('CMFile.php');
 include_once('CMFileMultiReader.php');
 include_once('CMFileMultiWriter.php');
+include_once('CMVCalendar.php');
+include_once('CMVItem.php');
 
 /**
  * @brief This class is for iCal items.
@@ -133,6 +135,13 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return array('text/calendar');
 	}
 	
+	public function escapeString($str) {
+		$str = str_replace('\n', "\n", $str);
+		$str = str_replace('\t', "\t", $str);
+		$str = str_replace('\r', "\r", $str);
+		return $str;
+	}
+	
 	/**
 	 * @brief Interate to the next line or object.
 	 * 
@@ -150,7 +159,61 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	 *         string, number, array, object etc of the next iteration.
 	 */
 	public function readNext($options = false) {
-		return false;
+		// prechecks
+		$r = false;
+		$event = false;
+		$depth = 0;
+		if($this->f === false || feof($this->f))
+			return $r;
+		
+		// reading the file one line at a time look for the open
+		while(!feof($this->f)) {
+			$line = trim(fgets($this->f));
+			$pos = strpos($line, ":");
+			if($pos !== false) {
+				$key = substr($line, 0, $pos);
+				$value = substr($line, $pos + 1);
+			}
+			
+			if($line == "BEGIN:VCALENDAR")
+				$r = new CMVCalendar();
+			elseif($line == "END:VCALENDAR")
+				return $r;
+			elseif($key == "BEGIN") {
+				if($depth == 0)
+					$event = new CMVItem($value);
+				else
+					$event->children[] = new CMVItem($value);
+				++$depth;
+			} elseif($key == "END") {
+				if($depth == 1)
+					$r->addItem($event);
+				--$depth;
+			}
+				
+			elseif($key == "VERSION")
+				$r->version = $value;
+			elseif($key == "PRODID")
+				$r->prodID = $value;
+				
+			else {
+				$a = explode(";", $key);
+				$a2 = array();
+				for($i = 1; $i < count($a); ++$i) {
+					$item = $a[$i];
+					$pos = strpos($item, "=");
+					$a2[substr($item, 0, $pos)] = substr($item, $pos + 1);
+				}
+				
+				$value = $this->escapeString($value);
+				if($depth == 1)
+					$event->addAttribute($a[0], $value, $a2);
+				else
+					$event->children[count($event->children) - 1]->addAttribute($a[0], $value, $a2);
+			}
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -221,15 +284,28 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return true;
 	}
 	
-	/**
-	 * @brief Multirecord file type.
-	 */
-	public function isMultiRecord() {
-		return true;
-	}
-	
 	function writeNext($item) {
-		return false;
+		if($this->f === false)
+			return false;
+			
+		fwrite($this->f, "BEGIN:VCALENDAR\n");
+		fwrite($this->f, "VERSION:" . $item->version . "\n");
+		fwrite($this->f, "PRODID:" . $item->prodID . "\n");
+		
+		foreach($item->items as $it) {
+			fwrite($this->f, "BEGIN:" . $it->type . "\n");
+			foreach($it->attr as $k => $v) {
+				fwrite($this->f, $k);
+				foreach($v as $k2 => $v2) {
+					if($k2 != "VALUE")
+						fwrite($this->f, ";$k2=$v2");
+				}
+				fwrite($this->f, ":" . $v['VALUE'] . "\n");
+			}
+			fwrite($this->f, "END:" . $it->type . "\n");
+		}
+		
+		fwrite($this->f, "END:VCALENDAR\n");
 	}
 	
 }

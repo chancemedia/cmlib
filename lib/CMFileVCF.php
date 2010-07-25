@@ -224,13 +224,6 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 		return true;
 	}
 	
-	/**
-	 * @brief Multirecord file type.
-	 */
-	public function isMultiRecord() {
-		return true;
-	}
-	
 	function writeNext($item) {
 		return false;
 	}
