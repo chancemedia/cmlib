@@ -1,6 +1,7 @@
 <?php
 
 include_once("CMObject.php");
+include_once("CMError.php");
 
 /**
  * @brief vCard.
@@ -8,7 +9,7 @@ include_once("CMObject.php");
  * @author Elliot Chance
  * @see CMFileVCF
  */
-class CMVCard implements CMObject {
+class CMVCard extends CMError implements CMObject {
 	
 	/**
 	 * @brief To hold the vCard data.
@@ -32,7 +33,7 @@ class CMVCard implements CMObject {
 	 *        vCard into an older format it is recommnded you leave this option out.
 	 */
 	public function CMVCard($version = "3.0") {
-		$this->version = $version;
+		$this->setVersion($version);
 	}
 	
 	/**
@@ -51,6 +52,13 @@ class CMVCard implements CMObject {
 	 * @return \true.
 	 */
 	public function setVersion($newVersion) {
+		// validate version
+		if($newVersion != "2.1" && $newVersion != "3.0") {
+			$this->throwWarning("vCard version $newVersion is not supported, using 3.0");
+			$this->version = "3.0";
+			return true;
+		}
+		
 		$this->version = $newVersion;
 		return true;
 	}
