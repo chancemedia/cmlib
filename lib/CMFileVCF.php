@@ -279,8 +279,38 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 		return true;
 	}
 	
+	/**
+	 * @brief Write a CMVCard object to the output file.
+	 * @param $item CMVCard object.
+	 */
 	function writeNext($item = false) {
-		return false;
+		if($this->f === false)
+			return false;
+			
+		// item must be a CMVCard
+		if(get_class($item) != "CMVCard")
+			return $this->throwWarning("\$item must be a CMVCard object.");
+			
+		fwrite($this->f, "BEGIN:VCARD\n");
+		fwrite($this->f, "VERSION:" . $item->getVersion() . "\n");
+		foreach($item->getData() as $k => $value) {
+			foreach($value as $v) {
+				fwrite($this->f, strtoupper(trim(str_replace(':', '\:', $k))));
+				if(is_array($v['attr'])) {
+					foreach($v['attr'] as $ak => $av) {
+						fwrite($this->f, ';');
+						if($av != "")
+							fwrite($this->f, "$ak=$av");
+						else
+							fwrite($this->f, $ak);
+					}
+				}
+				fwrite($this->f, ":" . str_replace(':', '\:', $v['value']) . "\n");
+			}
+		}
+		fwrite($this->f, "END:VCARD\n");
+		
+		return true;
 	}
 	
 }
