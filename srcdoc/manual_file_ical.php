@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @page manual_file_ical 7.2. iCalendar
+ * @page manual_file_ical 7.2. VCalendar
  * 
- * @section cmicalendar_properties Properties
+ * @section cmvcalendar_properties Properties
  * <table>
  *   <tr valign="top">
  *     <th>Class</th>

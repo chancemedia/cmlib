@@ -10,12 +10,29 @@ include_once("CMObject.php");
  */
 class CMVCalendar implements CMObject {
 	
+	/**
+	 * @brief Items.
+	 * @see CMVItem
+	 */
 	public $items = array();
 	
+	/**
+	 * @brief iCal version.
+	 * By default "2.0".
+	 */
 	public $version = "2.0";
 	
+	/**
+	 * @brief Product ID.
+	 * This is automatically geenrated by the constructor with the company and product names.
+	 */
 	public $prodID;
 	
+	/**
+	 * @brief Create a iCalendar object.
+	 * @param $company Company name.
+	 * @param $product Product name.
+	 */
 	public function CMVCalendar($company = "Chance MEDIA", $product = "CMLIB") {
 		$this->prodID = "-//$company//NONSGML $product//EN";
 	}

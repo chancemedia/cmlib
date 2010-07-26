@@ -2,18 +2,49 @@
 
 include_once('CMObject.php');
 
+/**
+ * @brief Used by CMVCalendar.
+ * 
+ * @author Elliot Chance
+ */
 class CMVItem implements CMObject {
 	
+	/**
+	 * @brief The type of item.
+	 * Official types include "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY".
+	 */
 	public $type = "";
 	
+	/**
+	 * @brief Attributes.
+	 * See \ref cmvcalendar_properties.
+	 */
 	public $attr = array();
 	
+	/**
+	 * @brief Sub-items.
+	 * This is often used for VALARM.
+	 */
 	public $children = array();
 	
+	/**
+	 * @brief Create a CMVItem of a given type.
+	 * @param $type Item type.
+	 * @see $type
+	 */
 	public function CMVItem($type) {
 		$this->type = strtoupper($type);
 	}
 	
+	/**
+	 * @brief Add an attribute.
+	 * 
+	 * Attributes are not not unique and multiple attributes can exist with the same name and value.
+	 * 
+	 * @param $attr Attribute name. This is non-casesensitive, but it will be converted to uppercase.
+	 * @param $value Attribute value.
+	 * @param $a Extra subattributes.
+	 */
 	public function addAttribute($attr, $value, $a = array()) {
 		$add = array('VALUE' => $value);
 		foreach($a as $k => $v)
