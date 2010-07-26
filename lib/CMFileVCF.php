@@ -4,6 +4,7 @@ include_once('CMFile.php');
 include_once('CMError.php');
 include_once('CMFileMultiReader.php');
 include_once('CMFileMultiWriter.php');
+include_once('CMVCard.php');
 
 /**
  * @brief vCard files.
@@ -81,14 +82,30 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	}
 	
 	/**
-	 * @brief Read entire vCard file.
+	 * @brief Read vCard file.
 	 * 
 	 * @param $url Valid PHP URL, relative or absolute path.
 	 * @param $a Extra attributes.
 	 */
 	public function readFile($url, $a = false) {
-		$this->throwWarning("readFile() is not implemented for CMFileVCF");
-		return false;
+		// all we have to do with this function is setup the input file handle
+		$this->f = fopen($url, "r");
+		if(!$this->f) {
+			$this->throwError("File could not be opened", array('uri' => $url));
+			return false;
+		}
+			
+		// $a must be an array
+		if(!is_array($a))
+			$a = array($a => true);
+		
+		// skip lines
+		if(isset($a['skip'])) {
+			for($i = 0; $i < $a['skip']; ++$i)
+				$this->readNext();
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -148,12 +165,48 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	}
 	
 	/**
-	 * @brief Iterate.
+	 * @brief Read next vCard object.
 	 * 
 	 * @param $options
 	 */
 	public function readNext($options = false) {
-		$this->throwWarning("readNext() is not implemented for CMFileVCF");
+		// prechecks
+		$r = false;
+		$vcard = false;
+		if($this->f === false || feof($this->f))
+			return $r;
+		
+		// reading the file one line at a time look for the open
+		while(!feof($this->f)) {
+			$line = trim(fgets($this->f));
+			if($line == "")
+				continue;
+			
+			$pos = strpos($line, ":");
+			if($pos !== false) {
+				$key = substr($line, 0, $pos);
+				$value = substr($line, $pos + 1);
+			}
+			
+			if($line == "BEGIN:VCARD")
+				$r = new CMVCard();
+			elseif($line == "END:VCARD")
+				return $r;
+				
+			elseif($key == "VERSION")
+				$r->setVersion($value);
+				
+			else {
+				$k = explode(';', $key);
+				$attributes = array();
+				for($i = 1; $i < count($k); ++$i) {
+					$attr = explode('=', $k[$i]);
+					$attributes[$attr[0]] = $attr[1];
+				}
+				$r->add($k[0], $value, $attributes);
+			}
+		}
+		
 		return false;
 	}
 	

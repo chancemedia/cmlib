@@ -3,7 +3,7 @@
 include_once("CMObject.php");
 
 /**
- * @brief vCard
+ * @brief vCard.
  * 
  * @author Elliot Chance
  * @see CMFileVCF
@@ -18,13 +18,21 @@ class CMVCard implements CMObject {
 	private $data = array();
 	
 	/**
+	 * @brief vCard version.
+	 * @see CMVCard()
+	 * @see getVersion()
+	 * @see setVersion()
+	 */
+	private $version = "3.0";
+	
+	/**
 	 * @brief Create a new vCard.
 	 * 
 	 * @param $version An optional version for the vCard. Unless you have a special reason to force your
 	 *        vCard into an older format it is recommnded you leave this option out.
 	 */
 	public function CMVCard($version = "3.0") {
-		$this->add('VERSION', $version);
+		$this->version = $version;
 	}
 	
 	/**
@@ -33,7 +41,7 @@ class CMVCard implements CMObject {
 	 * @return vCard version as a string.
 	 */
 	public function getVersion() {
-		return $this->data['VERSION'][0];
+		return $this->version;
 	}
 	
 	/**
@@ -43,7 +51,7 @@ class CMVCard implements CMObject {
 	 * @return \true.
 	 */
 	public function setVersion($newVersion) {
-		$this->data['VERSION'] = array($newVersion);
+		$this->version = $newVersion;
 		return true;
 	}
 	
@@ -70,7 +78,7 @@ class CMVCard implements CMObject {
 	 * @param $value A string value or an array of values to set the property to.
 	 * @return \true.
 	 */
-	public function set($property, $value) {
+	public function set($property, $value, $attr = array()) {
 		// $value must be an array
 		if(!is_array($value))
 			$value = array($value);
@@ -92,7 +100,7 @@ class CMVCard implements CMObject {
 	 * @param $value A string value or an array of multiple values to add.
 	 * @return \true.
 	 */
-	public function add($property, $value) {
+	public function add($property, $value, $attr = array()) {
 		// add multiple values
 		if(is_array($value)) {
 			foreach($value as $v)
@@ -104,7 +112,8 @@ class CMVCard implements CMObject {
 		$property = strtoupper($property);
 		if(!isset($this->data[$property]))
 			$this->data[$property] = array();
-		array_push($this->data[$property], $value);
+		array_push($this->data[$property], array('value' => $value, 'attr' => $attr));
+		
 		return true;
 	}
 	
@@ -131,6 +140,7 @@ class CMVCard implements CMObject {
 		$property = strtoupper($property);
 		if(!in_array($value, $this->data[$property]))
 			array_push($this->data[$property], $value);
+			
 		return true;
 	}
 	
@@ -146,21 +156,6 @@ class CMVCard implements CMObject {
 		if(isset($this->data[$property]))
 			unset($this->data[$property]);
 		return true;
-	}
-	
-	/**
-	 * @brief Generate and return the vCard in text format.
-	 * 
-	 * @return vCard string.
-	 */
-	public function generateVCard() {
-		$r = "BEGIN:VCARD\n";
-		foreach($this->data as $k => $v) {
-			foreach($v as $value)
-				$r .= "$k:$value\n";
-		}
-		$r .= "END:VCARD\n";
-		return $r;
 	}
 	
 	/**
@@ -186,6 +181,14 @@ class CMVCard implements CMObject {
 		if(isset($this->data['FN']))
 			return "<" . get_class($this) . ": " . $this->data['FN'][0] . ">";
 		return "<" . get_class($this) . ": (unnamed)>";
+	}
+	
+	public function getDisplayName() {
+		// use the FN if it exists
+		if(isset($this->data['FN']))
+			return $this->data['FN'][0]['value'];
+			
+		return "No name";
 	}
 	
 }
