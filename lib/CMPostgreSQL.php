@@ -405,8 +405,20 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			return $this;
 		}
 		
+		// suppress isset warnings and set defaults
+		if(!isset($v['host']))
+			$v['host'] = 'localhost';
+		if(!isset($v['port']))
+			$v['port'] = 5432;
+		if(!isset($v['db']))
+			$v['db'] = '';
+		if(!isset($v['user']))
+			$v['user'] = '';
+		if(!isset($v['pass']))
+			$v['pass'] = '';
+		
 		// attempt to connect
-		$this->dbh = pg_connect("host={$v['host']} port=5432 dbname={$v['db']} user={$v['user']} password={$v['pass']}");
+		$this->dbh = pg_connect("host={$v['host']} port={$v['port']} dbname={$v['db']} user={$v['user']} password={$v['pass']}");
 		if(!$this->dbh) {
 			$this->throwError("Could not connect to database.");
 			return $this;
