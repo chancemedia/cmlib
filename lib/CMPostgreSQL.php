@@ -590,7 +590,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		             'getHost', 'getPort', 'getProtocolVersion', 'getSchemaNames', 'getServerVersion',
 		             'getTableNames', 'getTTY', 'insert', 'isConnected', 'ping', 'query', 'reconnect',
 		             'rollback', 'setAutoCommit', 'setClientEncoding', 'tableExists', 'truncateTable',
-		             'update');
+		             'update', 'loadSQLFile', 'dropTable', 'dropAllTables');
 	}
 	
 	/**
