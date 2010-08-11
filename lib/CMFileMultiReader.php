@@ -15,6 +15,7 @@ interface CMFileMultiReader extends CMFileReader {
 	 * 
 	 * Invoke this after readString() or readFile().
 	 * 
+	 * @param $a Options.
 	 * @return The return type and value is different for each class that overloads readNext() but all
 	 *         classes will return \false when the next element cannot be read - because of an error or
 	 *         EOF.

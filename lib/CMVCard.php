@@ -84,6 +84,7 @@ class CMVCard extends CMError implements CMObject {
 	 * 
 	 * @param $property The name of the property, this must be a string.
 	 * @param $value A string value or an array of values to set the property to.
+	 * @param $attr Extra attributes. Ignored.
 	 * @return \true.
 	 */
 	public function set($property, $value, $attr = array()) {
@@ -106,6 +107,7 @@ class CMVCard extends CMError implements CMObject {
 	 * @param $property The name of the property, this must be a string. This is not case sensitive, all
 	 *        property names will always be converted and treated as upper case.
 	 * @param $value A string value or an array of multiple values to add.
+	 * @param $attr Extra attributes.
 	 * @return \true.
 	 */
 	public function add($property, $value, $attr = array()) {

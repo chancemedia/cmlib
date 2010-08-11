@@ -135,6 +135,11 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return array('text/calendar');
 	}
 	
+	/**
+	 * @brief Replace escapes with literal characters.
+	 * @param $str Input string.
+	 * @see escapeString()
+	 */
 	public function unescapeString($str) {
 		$str = str_replace('\n', "\n", $str);
 		$str = str_replace('\t', "\t", $str);
@@ -142,6 +147,11 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return $str;
 	}
 	
+	/**
+	 * @brief Replace literal characters with escapes.
+	 * @param $str Input string.
+	 * @see unescapeString()
+	 */
 	public function escapeString($str) {
 		$str = str_replace("\n", '\n', $str);
 		$str = str_replace("\t", '\t', $str);
@@ -285,6 +295,7 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 	 * be flushed and closed for you. Opening a read file handle on a file that has no been closed yet
 	 * will cause problems.
 	 * 
+	 * @param $a Options. Ignored.
 	 * @return Always \true.
 	 * @see prepareWriteFile()
 	 */
@@ -294,6 +305,12 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		return true;
 	}
 	
+	/**
+	 * @brief Internal method for writing CMVCalendar objects.
+	 * @param $it CMVCalendar object.
+	 * @see writeNext()
+	 * @return Always \true.
+	 */
 	private function writeNextItem($it) {
 		fwrite($this->f, "BEGIN:" . $it->type . "\n");
 		foreach($it->attr as $k => $vs) {
@@ -313,8 +330,15 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 		}
 				
 		fwrite($this->f, "END:" . $it->type . "\n");
+		
+		return true;
 	}
 	
+	/**
+	 * @brief Write the next VCalendar item to the file.
+	 * @param $item CMVCalendar object.
+	 * @return Always \true.
+	 */
 	public function writeNext($item = false) {
 		if($this->f === false)
 			return false;
@@ -327,6 +351,8 @@ class CMFileICAL implements CMFile, CMFileMultiReader, CMFileMultiWriter {
 			$this->writeNextItem($it);
 		
 		fwrite($this->f, "END:VCALENDAR\n");
+		
+		return true;
 	}
 	
 }

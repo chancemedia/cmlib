@@ -4,6 +4,12 @@
  * @page manual_about_release 1.1. Acquiring and Updating Procedure
  * 
  * 
+ * @section manual_about_release_contents Contents
+ * -# \ref manual_about_release_intro
+ * -# \ref manual_about_release_install
+ * -# \ref manual_about_release_update
+ * 
+ * 
  * @section manual_about_release_intro Introduction
  * 
  * cmlib is maintained at a central git repository at http://www.github.com/chancemedia/cmlib.
@@ -15,7 +21,7 @@
  * 
  * 1. Use:
  * 
- * <code>$ git clone git@github.com:chancemedia/cmlib.git</code>
+ * <code>$ git clone git://github.com/chancemedia/cmlib.git</code>
  * 
  * 2. Goto the download page at http://github.com/chancemedia/cmlib/downloads and download the latest
  * stable tag.

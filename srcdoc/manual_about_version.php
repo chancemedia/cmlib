@@ -22,7 +22,6 @@
  *   <li>CMError</li>
  *   <li>CMFileCSV</li>
  *   <li>CMFileICAL</li>
- *   <li>CMFileParser</li>
  *   <li>CMFileVCF</li>
  *   <li>CMForm</li>
  *   <li>CMFormatter</li>
@@ -38,11 +37,25 @@
  * 
  * 
  * @section manual_about_version_1_0a2 v1.0a2 (unreleased)
- * More cleanup and the completion of the following classes:
- * <ul>
- *   <li>CMFileICAL</li>
- *   <li>CMFileVCF</li>
- * </ul>
+ * Finalising classes:
+ * - CMFileICAL
+ * - CMFileVCF
+ *
+ * New classes:
+ * - CMFileReader
+ * - CMFileWriter
+ * - CMFileMultiReader
+ * - CMFileMultiWriter
+ *
+ * CMPostgreSQL
+ * - <a href="http://github.com/chancemedia/cmlib/commit/8049c2381ce87f3021c7b5c6f19c8483264681a7">8049c2381ce87f3021c7</a>
+ *   Less warnings when connecting to postgres without all the options.
+ * - <a href="http://github.com/chancemedia/cmlib/commit/c992cd62bd871f41a67f28565e01f90fb58d61f7">c992cd62bd871f41a67f</a>
+ *   Added CMPostgreSQL::loadSQLFile().
+ * - <a href="http://github.com/chancemedia/cmlib/commit/90b0de008a3466a49ffa5f11581c28d292e00a78">90b0de008a3466a49ffa</a>
+ *   Added CMPostgreSQL::dropTable(). Added CMPostgreSQL::dropAllTables().
+ *
+ * Latest http://github.com/chancemedia/cmlib/commit/90b0de008a3466a49ffa5f11581c28d292e00a78
  * 
  * 
  * @section manual_about_version_1_0a3 v1.0a3 (unreleased)

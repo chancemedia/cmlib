@@ -270,6 +270,7 @@ class CMFileVCF extends CMError implements CMFile, CMFileMultiReader, CMFileMult
 	 * be flushed and closed for you. Opening a read file handle on a file that has no been closed yet
 	 * will cause problems.
 	 * 
+	 * @param $a Options. Ignored.
 	 * @return Always \true.
 	 * @see prepareWriteFile()
 	 */

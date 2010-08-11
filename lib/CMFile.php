@@ -2,6 +2,10 @@
 
 include_once('CMClass.php');
 
+/**
+ * @brief Parent to all classes that deal with file I/O.
+ * @author Elliot Chance
+ */
 interface CMFile extends CMClass {
 	
 	/**
