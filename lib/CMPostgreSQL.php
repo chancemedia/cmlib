@@ -547,7 +547,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief Fetch the list of tables in the active database.
 	 * 
-	 * @param $schema
+	 * @param $schema Optional. Filter to a specific schema.
 	 */
 	public function getTableNames($schema = false) {
 		$filter = "";
@@ -559,7 +559,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief Check if a table exists.
 	 * 
-	 * @param $table
+	 * @param $table The name of the table.
 	 */
 	public function tableExists($table) {
 		return $this->query("select count(1) from information_schema.tables where table_name=?", $table)->fetch('cell');
@@ -1062,6 +1062,46 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			if(feof($f))
 				break;
 		}
+		
+		return $success;
+	}
+	
+	/**
+	 * @brief Drop (delete) a table.
+	 *
+	 * Use this will caution, this is irreversible.
+	 *
+	 * @param $tablename The name of the table to be dropped.
+	 * @param $a 'cascade' can be \true or \false. If it is not supplied then \true is used. If 'cascade' is \true it
+	 *        will remove any objects related directly to the table likw sequences, indexes, etc.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function dropTable($tablename, $a = array()) {
+		$sql = "DROP TABLE $tablename";
+		
+		if(!isset($a['cascade']))
+			$a['cascade'] = true;
+		if($a['cascade'])
+			$sql .= " CASCADE";
+			
+		return $this->execute($sql);
+	}
+	
+	/**
+	 * @brief Drop all of the tables in the current database.
+	 *
+	 * @note BE CAREFUL. This cannot be undone and will destory all the tables and the data they contain in an entire
+	 *       database.
+	 *
+	 * @param $a Options. Ignored.
+	 * @return \true if all the tables were dropped successfully, otherwise \false.
+	 */
+	public function dropAllTables($a = array()) {
+		$tables = $this->getTableNames('public');
+		$success = true;
+		
+		foreach($tables as $table)
+			$success = $success && $this->dropTable($table);
 		
 		return $success;
 	}
