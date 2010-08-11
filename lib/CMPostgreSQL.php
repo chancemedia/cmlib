@@ -993,6 +993,79 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		return $this->autoCommit;
 	}
 	
+	/**
+	 * @brief Load a SQL file into the current connection.
+	 *
+	 * This will read the input file one command at a time (skipping comments) and execute the statements. If a statement fails
+	 * an error will be pushed but the loading will not stop. You can review all of the errors after it's complete with
+	 * isErrors() and errors().
+	 *
+	 * As one command is loaded in at a time this will work on very large SQL files.
+	 *
+	 * @param $path The relative or absolute path to the SQL file. The file does not have to have a .sql extension and can even
+	 *        be remote through a URI that PHP's fopen() can understand.
+	 * @param $a Associative array of options.
+	 * @return \true if ALL the statements executed successfully, otherwise \false. Will also return \false is the input file
+	 *         could not be opened.
+	 */
+	public function loadSQLFile($path, $a = array()) {
+		// prepare
+		$f = fopen($path, "r");
+		if(!$f)
+			return $this->throwError("Could not open input file $path");
+		
+		// read each SQL command
+		$success = true;
+		$sql = "";
+		while(true) {
+			$c = fgetc($f);
+			
+			// skip whitespace
+			while(true) {
+				$c = fgetc($f);
+				if(!ctype_space($c)) {
+					fseek($f, -1, SEEK_CUR);
+					break;
+				}
+			}
+			
+			// comment
+			if($c == '-') {
+				if(fgetc($f) == '-') {
+					// keep reading until the comment ends
+					while(true) {
+						$c = fgetc($f);
+						if($c == "\n" || $c == "\r" || feof($f))
+							break;
+					}
+					continue;
+				}
+				else
+					fseek($f, -1, SEEK_CUR);
+			}
+			
+			// reading SQL
+			while(true) {
+				$c = fgetc($f);
+				if($c == ";" || feof($f)) {
+					$sql = trim($sql);
+					if($sql != "")
+						$this->query($sql);
+						
+					// reset
+					$sql = "";
+					break;
+				}
+				$sql .= $c;
+			}
+			
+			if(feof($f))
+				break;
+		}
+		
+		return $success;
+	}
+	
 }
 
 ?>
