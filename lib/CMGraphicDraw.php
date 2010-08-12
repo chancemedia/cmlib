@@ -2,6 +2,7 @@
 
 include_once('CMGraphic.php');
 include_once('CMColor.php');
+include_once('CMFont.php');
 
 /**
  * @brief CMGraphicDraw interface defines the methods for drawing image files.
@@ -29,6 +30,13 @@ class CMGraphicDraw extends CMGraphic {
 	 * @brief the stroke width (in pixels.)
 	 */
 	private $strokeWidth = 1;
+	
+	/**
+	 * @brief Drawing font.
+	 * @see setFont()
+	 * @see getFont()
+	 */
+	private $font;
 	
 	/**
 	 * @brief Anti alias enabled.
@@ -59,8 +67,9 @@ class CMGraphicDraw extends CMGraphic {
 		else if($this->getImageType() == "PNG")
 			$this->resource = imagecreatefrompng($file);
 			
-		// set the stroke color to black
+		// set the defaults
 		$this->strokeColor = CMColor::$Black;
+		$this->font = CMFont::$BuiltIn3;
 	}
 	
 	/**
@@ -444,6 +453,43 @@ class CMGraphicDraw extends CMGraphic {
 		
 		$color = $this->strokeColor->getGDColor($this->resource);
 		return imagefilledrectangle($this->resource, $x1, $y1, $x2, $y2, $color);
+	}
+	
+	/**
+	 * @brief Set the drawing font.
+	 * @param CMFont $font CMFont object.
+	 * @return The new font as a CMFont object.
+	 */
+	public function setFont(CMFont $font) {
+		$this->font = $font;
+		return $this->font;
+	}
+	
+	/**
+	 * @brief Get drawing font.
+	 * @return CMFont object.
+	 */
+	public function getFont() {
+		return $this->font;
+	}
+	
+	/**
+	 * @brief Draw horizontal string.
+	 * 
+	 * The color of the text will be the stroke color.
+	 * 
+	 * @param $x x-coordinate of the upper left corner.
+	 * @param $y y-coordinate of the upper left corner.
+	 * @param $string The string to be written.
+	 * @see setStrokeColor()
+	 */
+	public function drawString($x, $y, $string) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		$font = $this->font->getFontID();
+		return imagestring($this->resource, $font, $x, $y, $string, $color);
 	}
 	
 }
