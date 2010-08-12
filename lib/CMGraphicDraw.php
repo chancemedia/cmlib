@@ -21,16 +21,14 @@ class CMGraphicDraw extends CMGraphic {
 	public $resource = false;
 	
 	/**
-	 * @brief The drawing color of the brush.
+	 * @brief The drawing color of the stroke.
 	 */
-	private $brushColor = false;
+	private $strokeColor = false;
 	
 	/**
-	 * @brief The brush color in RGBA.
-	 * 
-	 * The default brush color is black.
+	 * @brief the stroke width (in pixels.)
 	 */
-	private $brushColorRGBA = array(0, 0, 0, 0);
+	private $strokeWidth = 1;
 	
 	/**
 	 * @brief Anti alias enabled.
@@ -61,63 +59,32 @@ class CMGraphicDraw extends CMGraphic {
 		else if($this->getImageType() == "PNG")
 			$this->resource = imagecreatefrompng($file);
 			
-		// set the brush color to black
-		$this->brushColor = imagecolorallocatealpha($this->resource, 0, 0, 0, 0);
+		// set the stroke color to black
+		$this->strokeColor = CMColor::$Black;
 	}
 	
 	/**
-	 * @brief Convert absolute or percentage color components into absolute color components.
+	 * @brief Set the current stroke color.
 	 * 
-	 * @param $red Red value (0 - 255 OR 0.0 - 1.0)
-	 * @param $green Green value (0 - 255 OR 0.0 - 1.0)
-	 * @param $blue Blue value (0 - 255 OR 0.0 - 1.0)
-	 * @param $alpha Alpha value (0 - 127 OR 0.0 - 1.0)
-	 * @return A new array with 4 elements representing red, green, blue and alpha respectivly.
+	 * This applies to line and perimiter drawing.
+	 * 
+	 * @param $color CMColor object.
+	 * @return The new stroke colour as a CMColor.
+	 * @see getStrokeColor()
 	 */
-	public function convertColorToAbsolute($red, $green, $blue, $alpha = 0) {
-		if($red < 1)
-			$red *= 255;
-		if($green < 1)
-			$green *= 255;
-		if($blue < 1)
-			$blue *= 255;
-		if($alpha < 1)
-			$alpha *= 127;
-		
-		return array($red, $green, $blue, $alpha);
+	public function setStrokeColor(CMColor $color) {
+		$this->strokeColor = $color;
+		return $this->strokeColor;
 	}
 	
 	/**
-	 * @brief Set the current brush color.
+	 * @brief Get the current stroke color.
 	 * 
-	 * @param $red Red value (0 - 255 OR 0.0 - 1.0)
-	 * @param $green Green value (0 - 255 OR 0.0 - 1.0)
-	 * @param $blue Blue value (0 - 255 OR 0.0 - 1.0)
-	 * @param $alpha Alpha value (0 - 127 OR 0.0 - 1.0)
-	 * @return The current brush colour as created by imagecolorallocate().
-	 * @see getBrushColor()
+	 * @return CMColor object.
+	 * @see setStrokeColor()
 	 */
-	public function setBrushColor($red, $green, $blue, $alpha = 0) {
-		if($this->resource === false)
-			return false;
-			
-		// translate colours
-		list($red, $green, $blue, $alpha) = $this->brushColorRGBA =
-			$this->convertColorToAbsolute($red, $green, $blue, $alpha);
-		
-		// set bruch color
-		$this->brushColor = imagecolorallocatealpha($this->resource, $red, $green, $blue, $alpha);
-		return $this->brushColor;
-	}
-	
-	/**
-	 * @brief Get the current brush color.
-	 * 
-	 * @return An array of 3 elements in the order of red, green and blue.
-	 * @see setBrushColor()
-	 */
-	public function getBrushColor() {
-		return $this->brushColorRGB;
+	public function getStrokeColor() {
+		return $this->strokeColor;
 	}
 	
 	/**
@@ -132,13 +99,14 @@ class CMGraphicDraw extends CMGraphic {
 	 *        the arc is drawn clockwise.
 	 * @param $a Options. Ignored.
 	 * @return \true on success, otherwise \false.
-	 * @see setBrushColor()
+	 * @see setStrokeColor()
 	 */
 	public function drawArc($cx, $cy, $width, $height, $start, $end, $a = array()) {
 		if($this->resource === false)
 			return false;
 		
-		return imagearc($this->resource, $cx, $cy, $width, $height, $start, $end, $this->brushColor);
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagearc($this->resource, $cx, $cy, $width, $height, $start, $end, $color);
 	}
 	
 	/**
@@ -154,7 +122,8 @@ class CMGraphicDraw extends CMGraphic {
 		if($this->resource === false)
 			return false;
 		
-		return imagerectangle($this->resource, $x1, $y1, $x2, $y2, $this->brushColor);
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagerectangle($this->resource, $x1, $y1, $x2, $y2, $color);
 	}
 	
 	/**
@@ -232,7 +201,7 @@ class CMGraphicDraw extends CMGraphic {
 	 * 
 	 * @param $x x-coordinate of the point.
 	 * @param $y y-coordinate of the point.
-	 * @return A four element array containing red, green, blue and alpha respectivly.
+	 * @return A CMColor object.
 	 */
 	public function colorAtPixel($x, $y) {
 		if($this->resource === false)
@@ -243,7 +212,7 @@ class CMGraphicDraw extends CMGraphic {
 		$g = ($rgb >> 8) & 0xFF;
 		$b = $rgb & 0xFF;
 		
-		return array($r, $g, $b, 0);
+		return new CMColor($r, $g, $b, 0);
 	}
 	
 	/**
@@ -259,7 +228,130 @@ class CMGraphicDraw extends CMGraphic {
 		if($this->resource === false)
 			return false;
 		
-		return imageline($this->resource, $x1, $y1, $x2, $y2, $this->brushColor);
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imageline($this->resource, $x1, $y1, $x2, $y2, $color);
+	}
+	
+	/**
+	 * @brief Draw a polygon.
+	 * 
+	 * @code
+	 * $image->drawPolygon(array(
+	 *   0,   0,
+	 *   100, 200,
+	 *   300, 200
+	 * ));
+	 * @endcode
+	 * 
+	 * @param $points An array containing the polygon's vertices in the form of
+	 *        array(x0, y0, x1, y1 ...)
+	 * 
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawPolygon($points) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagepolygon($this->resource, $points, count($points) / 2, $color);
+	}
+	
+	/**
+	 * @brief Draw an ellipse.
+	 * 
+	 * @param $cx x-coordinate of the center.
+	 * @param $cy y-coordinate of the center.
+	 * @param $width The ellipse width.
+	 * @param $height The ellipse height.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawEllipse($cx, $cy, $width, $height) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imageellipse($this->resource, $cx, $cy, $width, $height, $color);
+	}
+	
+	/**
+	 * @brief Draw a dashed line.
+	 * 
+	 * @param $x1 x-coordinate for first point.
+	 * @param $y1 y-coordinate for first point.
+	 * @param $x2 x-coordinate for second point.
+	 * @param $y2 y-coordinate for second point.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawDashedLine($x1, $y1, $x2, $y2) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagedashedline($this->resource, $x1, $y1, $x2, $y2, $color);
+	}
+	
+	/**
+	 * @brief Get the height (in pixels) of the image.
+	 * @return An integer on success or \false if there was an error.
+	 */
+	public function getHeight() {
+		if($this->resource !== false)
+			return imagesy($this->resource);
+			
+		return parent::getHeight();
+	}
+	
+	/**
+	 * @brief Get the width (in pixels) of the image.
+	 * @return An integer on success or \false if there was an error.
+	 */
+	public function getWidth() {
+		if($this->resource !== false)
+			return imagesx($this->resource);
+			
+		return parent::getWidth();
+	}
+	
+	/**
+	 * @brief Set a single pixel.
+	 * 
+	 * @param $x x-coordinate.
+	 * @param $y y-coordinate.
+	 * @param $color The color to set the pixel to.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function setPixel($x, $y, CMColor $color) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagesetpixel($this->resource, $x, $y, $color);
+	}
+	
+	/**
+	 * @brief Set the current stroke width in pixels.
+	 * 
+	 * This applies to line and perimiter drawing.
+	 * 
+	 * @param $width Stroke width in pixels.
+	 * @return The new stroke width or \false if an error occured.
+	 * @see getStrokeWidth()
+	 */
+	public function setStrokeWidth($width) {
+		$this->strokeWidth = $width;
+		if(imagesetthickness($this->resource, $this->strokeWidth))
+			return $this->strokeWidth;
+		return false;
+	}
+	
+	/**
+	 * @brief Get the current stroke width in pixels.
+	 * 
+	 * @return Stroke width in pixels.
+	 * @see setStrokeWidth()
+	 */
+	public function getStrokeWidth() {
+		return $this->strokeWidth;
 	}
 	
 }
