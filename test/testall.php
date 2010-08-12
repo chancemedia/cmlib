@@ -11,6 +11,7 @@ $tests = array(
 	new CMTest('CMFileICAL', "test_CMFileICAL.php"),
 	new CMTest('CMFileVCF', "test_CMFileVCF.php"),
 	new CMTest('CMFormatter', "test_CMFormatter.php"),
+	new CMTest('CMGraphicDraw', "test_CMGraphicDraw.php"),
 	new CMTest('CMMySQL', "test_CMMySQL.php"),
 	new CMTest('CMVCard', "test_CMVCard.php"),
 	new CMTest('CMVersion', "test_CMVersion.php")
