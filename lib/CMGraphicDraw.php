@@ -457,7 +457,7 @@ class CMGraphicDraw extends CMGraphic {
 	
 	/**
 	 * @brief Set the drawing font.
-	 * @param CMFont $font CMFont object.
+	 * @param $font CMFont object.
 	 * @return The new font as a CMFont object.
 	 */
 	public function setFont(CMFont $font) {
@@ -490,6 +490,25 @@ class CMGraphicDraw extends CMGraphic {
 		$color = $this->strokeColor->getGDColor($this->resource);
 		$font = $this->font->getFontID();
 		return imagestring($this->resource, $font, $x, $y, $string, $color);
+	}
+	
+	/**
+	 * @brief Draw vertical string.
+	 * 
+	 * The color of the text will be the stroke color.
+	 * 
+	 * @param $x x-coordinate of the upper left corner.
+	 * @param $y y-coordinate of the upper left corner.
+	 * @param $string The string to be written.
+	 * @see setStrokeColor()
+	 */
+	public function drawVerticalString($x, $y, $string) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		$font = $this->font->getFontID();
+		return imagestringup($this->resource, $font, $x, $y, $string, $color);
 	}
 	
 }
