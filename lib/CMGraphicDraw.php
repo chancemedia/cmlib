@@ -354,6 +354,98 @@ class CMGraphicDraw extends CMGraphic {
 		return $this->strokeWidth;
 	}
 	
+	/**
+	 * @brief Draw a filled arc.
+	 * 
+	 * @param $cx x-coordinate of the center.
+	 * @param $cy y-coordinate of the center.
+	 * @param $width The arc width.
+	 * @param $height The arc height.
+	 * @param $start The arc start angle, in degrees.
+	 * @param $end The arc end angle, in degrees. 0° is located at the three-o'clock position, and
+	 *        the arc is drawn clockwise.
+	 * @param $style A bitwise OR of the following possibilities:
+	 *        IMG_ARC_PIE
+	 *        IMG_ARC_CHORD
+	 *        IMG_ARC_NOFILL
+	 *        IMG_ARC_EDGED.
+	 *        IMG_ARC_PIE and IMG_ARC_CHORD are mutually exclusive; IMG_ARC_CHORD just connects the
+	 *        starting and ending angles with a straight line, while IMG_ARC_PIE produces a rounded
+	 *        edge. IMG_ARC_NOFILL indicates that the arc or chord should be outlined, not filled.
+	 *        IMG_ARC_EDGED, used together with IMG_ARC_NOFILL, indicates that the beginning and
+	 *        ending angles should be connected to the center - this is a good way to outline
+	 *        (rather than fill) a 'pie slice'.
+	 * @param $a Options. Ignored.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawFilledArc($cx, $cy, $width, $height, $start, $end, $style = IMG_ARC_PIE,
+	                              $a = array()) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagefilledarc($this->resource, $cx, $cy, $width, $height, $start, $end, $color,
+		                      $style);
+	}
+	
+	/**
+	 * @brief Draw a filled ellipse.
+	 * 
+	 * @param $cx x-coordinate of the center.
+	 * @param $cy y-coordinate of the center.
+	 * @param $width The ellipse width.
+	 * @param $height The ellipse height.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawFilledEllipse($cx, $cy, $width, $height) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagefilledellipse($this->resource, $cx, $cy, $width, $height, $color);
+	}
+	
+	/**
+	 * @brief Draw a filled polygon.
+	 * 
+	 * @code
+	 * $image->drawFilledPolygon(array(
+	 *   0,   0,
+	 *   100, 200,
+	 *   300, 200
+	 * ));
+	 * @endcode
+	 * 
+	 * @param $points An array containing the polygon's vertices in the form of
+	 *        array(x0, y0, x1, y1 ...)
+	 * 
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawFilledPolygon($points) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagefilledpolygon($this->resource, $points, count($points) / 2, $color);
+	}
+	
+	/**
+	 * @brief Draw a filled rectangle.
+	 * 
+	 * @param $x1 Upper left x coordinate.
+	 * @param $y1 Upper left y coordinate 0, 0 is the top left corner of the image.
+	 * @param $x2 Bottom right x coordinate.
+	 * @param $y2 Bottom right y coordinate.
+	 * @return \true on success, otherwise \false.
+	 */
+	public function drawFilledRectangle($x1, $y1, $x2, $y2) {
+		if($this->resource === false)
+			return false;
+		
+		$color = $this->strokeColor->getGDColor($this->resource);
+		return imagefilledrectangle($this->resource, $x1, $y1, $x2, $y2, $color);
+	}
+	
 }
 
 ?>
