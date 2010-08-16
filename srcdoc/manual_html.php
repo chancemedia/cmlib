@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @page manual_html 3. HTML
+ * @page manual_html 3. HTML & CSS
  * 
  * @section manual_html_subpages Subpages
  * -# \subpage manual_html_form
+ * -# \subpage manual_html_table
  * 
  * 
  * @section manual_html_contents Contents
