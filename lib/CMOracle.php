@@ -906,6 +906,19 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	public function getAutoCommit() {
 		return $this->autoCommit;
 	}
+	
+	/**
+	 * @brief Escape an entity based on the correct rules of the database engine.
+	 *
+	 * An entity is a table name, view name, column name, etc. Most databases require a different quote
+	 * encapsulation than escapeString().
+	 * 
+	 * @param $str The value to be escaped.
+	 * @return Escaped entity which includes and quotes or encapsulation.
+	 */
+	public function escapeEntity($str) {
+		return $str;
+	}
 
 }
 
