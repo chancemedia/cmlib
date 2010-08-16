@@ -78,6 +78,18 @@ class CMHTML implements CMClass {
 		}
 		$r .= ">";
 		
+		// find the maximum amount of columns
+		$cols = 1;
+		if(is_array($a['data'])) {
+			foreach($a['data'] as $row) {
+				if(is_array($row)) {
+					if(count($row) > $cols)
+						$cols = count($row);
+				}
+			}
+		}
+		echo "cols = $cols";
+		
 		// header
 		if(isset($a['header'])) {
 			$r .= "<tr>";
@@ -90,8 +102,22 @@ class CMHTML implements CMClass {
 		if(is_array($a['data'])) {
 			foreach($a['data'] as $row) {
 				$r .= "<tr>";
-				foreach($row as $cell)
-					$r .= "<td>$cell</td>";
+				
+				if(is_array($row)) {
+					foreach($row as $cell) {
+						$r .= "<td";
+						if(count($row) != $cols)
+							$r .= ' colspan="' . ($cols - count($row) + 1) . '"';
+						$r .= ">$cell</td>";
+					}
+				}
+				else {
+					$r .= "<td";
+					if($cols != 1)
+						$r .= ' colspan="' . $cols . '"';
+					$r .= ">$row</td>";
+				}
+					
 				$r .= "</tr>";
 			}
 		}
