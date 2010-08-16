@@ -1032,19 +1032,21 @@ class CMDataModel extends CMError implements CMClass {
 		// create SQL
 		$sql = "SELECT COUNT(1) FROM $tableName WHERE ";
 		$first = true;
-		foreach($this->pool[$pool] as $k => $v) {
+		foreach($this->pools[$pool] as $k => $v) {
 			if(!$first)
 				$sql .= " AND ";
-			else $first = false;
+			else
+				$first = false;
 			
-			$sql .= "$k='$v'";
+			$sql .= $this->dbh->escapeEntity($k) . "='$v'";
 		}
 		foreach($extra as $k => $v) {
 			if(!$first)
 				$sql .= " AND ";
-			else $first = false;
+			else
+				$first = false;
 			
-			$sql .= "$k='$v'";
+			$sql .= $this->dbh->escapeEntity($k) . "='$v'";
 		}
 		
 		// perform lookup
