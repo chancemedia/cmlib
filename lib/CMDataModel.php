@@ -142,9 +142,10 @@ class CMDataModel extends CMError implements CMClass {
 		if(!isset($_SESSION["datamodel_$name"]))
 			$_SESSION["datamodel_$name"] = new CMDataModel($name);
 		$dm = $_SESSION["datamodel_$name"];
-			
+		
 		// load the $_GET and $_POST
-		$dm->drainPool(array('get', 'post'));
+		$dm->addPool('get', true);
+		$dm->addPool('post', true);
 		$dm->fillPool(CMForm::StripSlashesRecursive($_GET), 'get');
 		$dm->fillPool(CMForm::StripSlashesRecursive($_POST), 'post');
 		
@@ -200,7 +201,7 @@ class CMDataModel extends CMError implements CMClass {
 			return NULL;
 		}
 		
-		return $this->pools[$pool][$name];
+		return $this->pool[$pool][$name];
 	}
 	
 	/**
@@ -230,8 +231,8 @@ class CMDataModel extends CMError implements CMClass {
 		}
 		
 		// set the variable
-		$this->pools[$pool][$name] = $value;
-		return $this->pools[$pool][$name];
+		$this->pool[$pool][$name] = $value;
+		return $this->pool[$pool][$name];
 	}
 	
 	/**
@@ -311,10 +312,10 @@ class CMDataModel extends CMError implements CMClass {
 	 */
 	public function exists($name, $pool = 'public') {
 		// check if the pool exists
-		if(!isset($this->pools[$pool]))
+		if(!isset($this->pool[$pool]))
 			return false;
 			
-		return isset($this->pools[$pool][$name]);
+		return isset($this->pool[$pool][$name]);
 	}
 	
 	/**
@@ -353,7 +354,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @return \true or \false.
 	 */
 	public function poolExists($name = 'public') {
-		return isset($this->pools[$name]);
+		return isset($this->pool[$name]);
 	}
 	
 	/**
@@ -424,7 +425,7 @@ class CMDataModel extends CMError implements CMClass {
 		}
 		
 		// drain pool
-		$this->pools[$name] = array();
+		$this->pool[$name] = array();
 		
 		// drain validator
 		if($this->vh !== false) {
@@ -487,7 +488,7 @@ class CMDataModel extends CMError implements CMClass {
 			return false;
 		}
 		
-		return $this->pools[$name];
+		return $this->pool[$name];
 	}
 	
 	/**
@@ -516,7 +517,7 @@ class CMDataModel extends CMError implements CMClass {
 		if($fields == 'auto') {
 			if(!$this->poolExists($tableName))
 				return $this->throwWarning("Pool '$tableName' does not exist.");
-			$fields = $this->pools[$tableName];
+			$fields = $this->pool[$tableName];
 		}
 			
 		// we need a database handle
@@ -549,7 +550,7 @@ class CMDataModel extends CMError implements CMClass {
 		if($fields == 'auto') {
 			if(!$this->poolExists($tableName))
 				return $this->throwWarning("Pool '$tableName' does not exist.");
-			$fields = $this->pools[$tableName];
+			$fields = $this->pool[$tableName];
 		}
 			
 		// we need a database handle
@@ -598,7 +599,7 @@ class CMDataModel extends CMError implements CMClass {
 		if(!$replace && $this->poolExists($name))
 			return true;
 		
-		$this->pools[$name] = array();
+		$this->pool[$name] = array();
 		return true;
 	}
 	
@@ -619,7 +620,7 @@ class CMDataModel extends CMError implements CMClass {
 		
 		// add items to the pool
 		foreach($values as $k => $v)
-			$this->pools[$name][$k] = $v;
+			$this->pool[$name][$k] = $v;
 		
 		return true;
 	}
@@ -701,13 +702,13 @@ class CMDataModel extends CMError implements CMClass {
 			$pool = substr($name, 0, $pos);
 			$newname = substr($name, $pos + 1, strlen($name) - $pos - 2);
 			
-			if(isset($this->pools[$pool][$newname]))
-				return array($name, $this->pools[$pool][$newname]);
+			if(isset($this->pool[$pool][$newname]))
+				return array($name, $this->pool[$pool][$newname]);
 			return array($name, NULL);
 		}
 		
-		if(isset($this->pools['public'][$name]))
-			return array($name, $this->pools['public'][$name]);
+		if(isset($this->pool['public'][$name]))
+			return array($name, $this->pool['public'][$name]);
 		return array($name, NULL);
 	}
 	
@@ -1032,7 +1033,7 @@ class CMDataModel extends CMError implements CMClass {
 		// create SQL
 		$sql = "SELECT COUNT(1) FROM $tableName WHERE ";
 		$first = true;
-		foreach($this->pools[$pool] as $k => $v) {
+		foreach($this->pool[$pool] as $k => $v) {
 			if(!$first)
 				$sql .= " AND ";
 			else
