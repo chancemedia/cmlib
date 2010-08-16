@@ -88,7 +88,6 @@ class CMHTML implements CMClass {
 				}
 			}
 		}
-		echo "cols = $cols";
 		
 		// header
 		if(isset($a['header'])) {
