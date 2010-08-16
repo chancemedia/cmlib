@@ -28,39 +28,10 @@ class CMHTML implements CMClass {
 	/**
 	 * @brief Build a HTML table
 	 * 
-	 * All of the provided attributes can be database query handles, but it's important to note that the
-	 * query handle will be converted into an array - but unless it is needed as an array it will take
-	 * the first element as the value. For example:
-	 * @code
-	 * echo CMHTML::Table(array(
-	 *   'cellspacing' => $dbh->query("select tablespacing, name from mytable limit 3")
-	 * ));
-	 * @endcode
-	 * As <tt>cellspacing</tt> is not recognised in the table below it is assumed to be a single value
-	 * attribute for the &lt;table&gt; tag, so the output may look something like this:
-	 * @code
-	 * <table cellspacing="5">
-	 *   ...
-	 * </table>
-	 * @endcode
-	 * 
-	 * @param $a Attributes
-	 * Any attribute provided that is not listed in the table below will be added as an attribute to the
-	 * &lt;table&gt; tag - examples include <tt>cellpadding</tt>, <tt>style</tt> etc.
-	 * <table>
-	 *   <tr>
-	 *     <th>Name</th>
-	 *     <th>Description</th>
-	 *   </tr>
-	 *   <tr>
-	 *     <td><tt>data</tt></td>
-	 *     <td>Can be a 2 dimentional array, or a database query handle.</td>
-	 *   </tr>
-	 *   <tr>
-	 *     <td><tt>header</tt></td>
-	 *     <td>An array, or a database query handle.</td>
-	 *   </tr>
-	 * </table>
+	 * See full description and usage at \ref manual_html_table.
+	 *
+	 * @param $a Attributes that build the table.
+	 * @return Fully rendered HTML, it will not print the result.
 	 */
 	public static function Table($a) {
 		// convert queries to data, we dont want to convert the 'data' key because it might be
@@ -73,7 +44,7 @@ class CMHTML implements CMClass {
 		// create the <table> tag
 		$r = "<table";
 		foreach($a as $k => $v) {
-			if(!in_array($k, array('data', 'header')))
+			if(in_array($k, array('cellpadding', 'cellspacing', 'border', 'style', 'class', 'id', 'name', 'width')))
 				$r .= " $k=\"$v\"";
 		}
 		$r .= ">";
@@ -100,47 +71,93 @@ class CMHTML implements CMClass {
 		
 		// a normal data array
 		if(is_array($a['data'])) {
+			$rowid = 0;
 			foreach($a['data'] as $row) {
-				// get styles
 				$trstyle = '';
-				$tdstyle = '';
-				if(isset($row['@tr']))
-					$trstyle = ' style="' . $row['@tr'] . '"';
-				if(isset($row['@td']))
-					$tdstyle = ' style="' . $row['@td'] . '"';
-						
+				if(isset($row['style']))
+					$trstyle = ' style="' . $row['style'] . '"';
+				elseif(isset($a['trstyle'])) {
+					if(is_object($a['trstyle']))
+						$trstyle = ' style="' . $a['trstyle'](array_merge($row, array('rowid' => $rowid))) . '"';
+					else
+						$trstyle = ' style="' . $a['trstyle'] . '"';
+				}
+				
 				$r .= "<tr$trstyle>";
 				
-				if(is_array($row)) {
-					foreach($row as $k => $cell) {
-						// skip style
-						if(substr($k, 0, 1) == '@')
-							continue;
+				if(!is_array($row))
+					$row = array($row);
+				
+				$i = 0;
+				foreach($row as $k => $cell) {
+					// skip style
+					if(!is_numeric($k))
+						continue;
 						
-						$r .= "<td$tdstyle";
-						$count = CMHTML::CountColumns($row);
-						if($count != $cols)
-							$r .= ' colspan="' . ($cols - $count + 1) . '"';
-						$r .= ">$cell</td>";
+					$tdstyle = '';
+					if(isset($row["style@$i"]))
+						$tdstyle = ' style="' . $row["style@$i"] . '"';
+					elseif(isset($row["tdstyle"])) {
+						if(is_object($row["tdstyle"]))
+							$tdstyle = ' style="' . $row["tdstyle"](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+						else
+							$tdstyle = ' style="' . $row["tdstyle"] . '"';
 					}
-				}
-				else {
-					$r .= "<td";
-					if($cols != 1)
-						$r .= ' colspan="' . $cols . '"';
-					$r .= ">$row</td>";
+					elseif(isset($a['tdstyle'])) {
+						if(is_object($a['tdstyle']))
+							$tdstyle = ' style="' . $a['tdstyle'](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+						else
+							$tdstyle = ' style="' . $a['tdstyle'] . '"';
+					}
+						
+					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, $cols, $tdstyle);
+					++$i;
 				}
 					
+				++$rowid;
 				$r .= "</tr>";
 			}
 		}
 		
 		// a database query handle
 		elseif($a['data'] instanceof CMQueryProtocol) {
+			$rowid = 0;
 			while($row = $a['data']->fetch()) {
-				$r .= "<tr>";
-				foreach($row as $cell)
-					$r .= "<td>$cell</td>";
+				$trstyle = '';
+				if(isset($row['style']))
+					$trstyle = ' style="' . $row['style'] . '"';
+				elseif(isset($a['trstyle'])) {
+					if(is_object($a['trstyle']))
+						$trstyle = ' style="' . $a['trstyle'](array_merge($row, array('rowid' => $rowid))) . '"';
+					else
+						$trstyle = ' style="' . $a['trstyle'] . '"';
+				}
+						
+				$r .= "<tr$trstyle>";
+						
+				$i = 0;
+				foreach($row as $cell) {
+					$tdstyle = '';
+					if(isset($row["style@$i"]))
+						$tdstyle = ' style="' . $row["style@$i"] . '"';
+					elseif(isset($row["tdstyle"])) {
+						if(is_object($row["tdstyle"]))
+							$tdstyle = ' style="' . $row["tdstyle"](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+						else
+							$tdstyle = ' style="' . $row["tdstyle"] . '"';
+					}
+					elseif(isset($a['tdstyle'])) {
+						if(is_object($a['tdstyle']))
+							$tdstyle = ' style="' . $a['tdstyle'](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+						else
+							$tdstyle = ' style="' . $a['tdstyle'] . '"';
+					}
+						
+					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, count($row), $tdstyle);
+					++$i;
+				}
+				
+				++$rowid;
 				$r .= "</tr>";
 			}
 		}
@@ -149,12 +166,37 @@ class CMHTML implements CMClass {
 		return $r;
 	}
 	
+	/**
+	 * @brief Render a table cell.
+	 * @param $rowid
+	 * @param $a
+	 * @param $i
+	 * @param $row
+	 * @param $cell
+	 * @param $cols
+	 * @param $tdstyle
+	 * @return Rendered table cell.
+	 */
+	private static function RenderCell($rowid, $a, $i, $row, $cell, $cols, $tdstyle) {
+		$r = "<td$tdstyle";
+		$count = CMHTML::CountColumns($row);
+		if($count != $cols)
+			$r .= ' colspan="' . ($cols - $count + 1) . '"';
+		$r .= ">$cell</td>";
+						
+		return $r;
+	}
+	
+	/**
+	 * @brief Internal method to count the real number of table cells.
+	 * @param $row The row of value to filter.
+	 */
 	private static function CountColumns($row) {
 		$count = 0;
 		
 		if(is_array($row)) {
 			foreach($row as $k => $v) {
-				if(substr($k, 0, 1) != '@')
+				if(is_numeric($k))
 					++$count;
 			}
 		}
