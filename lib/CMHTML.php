@@ -213,6 +213,37 @@ class CMHTML implements CMClass {
 		return "<" . get_class($this) . ">";
 	}
 	
+	/**
+	 * @brief Print a box (container.)
+	 * @param $a Attributes.
+	 */
+	public function Box($a) {
+		// defaults
+		if(!is_array($a))
+			$a = array($a);
+			
+		if(!isset($a['cellspacing']))
+			$a['cellspacing'] = 0;
+		if(!isset($a['cellpadding']))
+			$a['cellpadding'] = 3;
+		if(!isset($a['border']))
+			$a['border'] = 0;
+			
+		// start
+		$r = "<table cellspacing=\"$a[cellspacing]\" cellpadding=\"$a[cellpadding]\" border=\"$a[border]\" style=\"border: solid 1px #CCCCCC\">";
+		
+		// title
+		if(isset($a['title']))
+			$r .= "<tr><td style=\"background-color: #CCCCCC\">$a[title]</td></tr>";
+			
+		// body
+		$r .= "<tr><td>$a[body]</td></tr>";
+		
+		// end
+		$r .= "</table>";
+		return $r;
+	}
+	
 }
 
 ?>
