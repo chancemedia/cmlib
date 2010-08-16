@@ -83,8 +83,9 @@ class CMHTML implements CMClass {
 		if(is_array($a['data'])) {
 			foreach($a['data'] as $row) {
 				if(is_array($row)) {
-					if(count($row) > $cols)
-						$cols = count($row);
+					$count = CMHTML::CountColumns($row);
+					if($count > $cols)
+						$cols = $count;
 				}
 			}
 		}
@@ -100,13 +101,26 @@ class CMHTML implements CMClass {
 		// a normal data array
 		if(is_array($a['data'])) {
 			foreach($a['data'] as $row) {
-				$r .= "<tr>";
+				// get styles
+				$trstyle = '';
+				$tdstyle = '';
+				if(isset($row['@tr']))
+					$trstyle = ' style="' . $row['@tr'] . '"';
+				if(isset($row['@td']))
+					$tdstyle = ' style="' . $row['@td'] . '"';
+						
+				$r .= "<tr$trstyle>";
 				
 				if(is_array($row)) {
-					foreach($row as $cell) {
-						$r .= "<td";
-						if(count($row) != $cols)
-							$r .= ' colspan="' . ($cols - count($row) + 1) . '"';
+					foreach($row as $k => $cell) {
+						// skip style
+						if(substr($k, 0, 1) == '@')
+							continue;
+						
+						$r .= "<td$tdstyle";
+						$count = CMHTML::CountColumns($row);
+						if($count != $cols)
+							$r .= ' colspan="' . ($cols - $count + 1) . '"';
 						$r .= ">$cell</td>";
 					}
 				}
@@ -133,6 +147,21 @@ class CMHTML implements CMClass {
 		
 		$r .= "</table>\n";
 		return $r;
+	}
+	
+	private static function CountColumns($row) {
+		$count = 0;
+		
+		if(is_array($row)) {
+			foreach($row as $k => $v) {
+				if(substr($k, 0, 1) != '@')
+					++$count;
+			}
+		}
+		else
+			$count = 1;
+			
+		return $count;
 	}
 	
 	/**
