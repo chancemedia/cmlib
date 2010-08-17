@@ -153,7 +153,7 @@ class CMHTML implements CMClass {
 							$tdstyle = ' style="' . $a['tdstyle'] . '"';
 					}
 						
-					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, count($row), $tdstyle);
+					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, 0, $tdstyle);
 					++$i;
 				}
 				
@@ -178,6 +178,14 @@ class CMHTML implements CMClass {
 	 * @return Rendered table cell.
 	 */
 	private static function RenderCell($rowid, $a, $i, $row, $cell, $cols, $tdstyle) {
+		// look for the data replacer
+		if(isset($a["data@$i"])) {
+			if(is_object($a["data@$i"]))
+				$cell = $a["data@$i"](array_merge($row, array('rowid' => $rowid, 'colid' => $i)));
+			else
+				$cell = $a["data@$i"];
+		}
+		
 		$r = "<td$tdstyle";
 		$count = CMHTML::CountColumns($row);
 		if($count != $cols)

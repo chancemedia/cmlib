@@ -18,6 +18,7 @@
  *   -# \ref manual_html_table_styles_td3
  *   -# \ref manual_html_table_styles_td4
  *   -# \ref manual_html_table_styles_td5
+ * -# \ref manual_html_table_data
  * 
  * 
  * @section manual_html_table_intro Introduction
@@ -369,6 +370,22 @@
  * <td style="background-color: black; color: white">16</td>
  * </tr>
  * </table>
+ * 
+ * 
+ * @section manual_html_table_data Data Replacer
+ * Just like with styles you can use a data replacer to process and modify the values of the table at runtime, this makes it easy
+ * to highlight certain data or add numerical counters to a database output.
+ * 
+ * @code
+ * echo CMHTML::Table(array(
+ *   'width' => '100%',
+ *   'header' => array('#', 'First name', 'Last name'),
+ *   'data' => $dbh->query('select 1, * from people'),
+ *   'data@0' => function($data) {
+ *     return $data['rowid'] + 1;
+ *   }
+ * ));
+ * @endcode
  */
 
 ?>
