@@ -5,6 +5,8 @@ include_once('CMObject.php');
 /**
  * @brief Defines a style which is interoperable with CSS.
  * 
+ * http://www.htmldog.com/reference/cssproperties
+ * 
  * @author Elliot Chance
  */
 class CMStyle implements CMObject {
