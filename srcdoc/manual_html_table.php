@@ -19,6 +19,8 @@
  *   -# \ref manual_html_table_styles_td4
  *   -# \ref manual_html_table_styles_td5
  * -# \ref manual_html_table_data
+ * -# \ref manual_html_table_header
+ * -# \ref manual_html_table_th
  * 
  * 
  * @section manual_html_table_intro Introduction
@@ -384,6 +386,31 @@
  *   'data@0' => function($data) {
  *     return $data['rowid'] + 1;
  *   }
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_table_header Repeating Header
+ * For some long tables you may want to repeat the table header every certain amount of rows. You can do this with the 'repeatheader'
+ * key and set the value to the number of rows to render before printing the header row again.
+ *
+ * @code
+ * echo CMHTML::Table(array(
+ *   'header' => array('First name', 'Last name'),
+ *   'data' => $dbh->query('select * from people'),
+ *   'repeatheader' => 10
+ * ));
+ * @endcode
+ * 
+ * 
+ * @section manual_html_table_th Table Header Styling
+ * Use 'thstyle' to style the &gt;th&lt;&gt;/th&lt; tags.
+ *
+ * @code
+ * echo CMHTML::Table(array(
+ *   'header' => array('First name', 'Last name'),
+ *   'data' => $dbh->query('select * from people'),
+ *   'thstyle' => 'border: solid 1px red; border-right: none'
  * ));
  * @endcode
  */

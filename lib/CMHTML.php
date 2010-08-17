@@ -61,12 +61,19 @@ class CMHTML implements CMClass {
 			}
 		}
 		
-		// header
+		// generate header (and save for later)
+		$header = '';
 		if(isset($a['header'])) {
-			$r .= "<tr>";
+			$header .= "<tr>";
+			
+			if(isset($a['thstyle']))
+				$thstyle = ' style="' . $a['thstyle'] . '"';
+			
 			foreach($a['header'] as $cell)
-				$r .= "<th>$cell</th>";
-			$r .= "</tr>";
+				$header .= "<th$thstyle>$cell</th>";
+				
+			$header .= "</tr>";
+			$r .= $header;
 		}
 		
 		// a normal data array
@@ -116,6 +123,10 @@ class CMHTML implements CMClass {
 					
 				++$rowid;
 				$r .= "</tr>";
+				
+				// repeat header
+				if(isset($a['repeatheader']) && !($rowid % $a['repeatheader']))
+					$r .= $header;
 			}
 		}
 		
@@ -159,6 +170,10 @@ class CMHTML implements CMClass {
 				
 				++$rowid;
 				$r .= "</tr>";
+				
+				// repeat header
+				if(isset($a['repeatheader']) && !($rowid % $a['repeatheader']))
+					$r .= $header;
 			}
 		}
 		
