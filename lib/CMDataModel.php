@@ -184,22 +184,30 @@ class CMDataModel extends CMError implements CMClass {
 	 * @brief Get a variable from a pool.
 	 * 
 	 * @throwsWarning If the pool does not exist.
+	 *
+	 * @note If you provide a value for \p $default you will not get an error, instead it will return
+	 *       the value of \p $default.
 	 * 
 	 * @param $name The name of the variable.
 	 * @param $pool An optional argument to specify the pool name, if no argument is given then the
 	 *        <tt>'public</tt> pool will be used.
+	 * @param $default Return this value if the variable does not exist.
 	 * @return If the variable exists in the pool the value will be returned, if the variable does
 	 *         not exist NULL is returned.
 	 *         
 	 * @see set()
 	 * @see request()
 	 */
-	public function get($name, $pool = 'public') {
+	public function get($name, $pool = 'public', $default = NULL) {
 		// if the pool doesn't exist we'll chuck an error
 		if(!$this->poolExists($pool)) {
-			$this->throwWarning("Pool '$pool' does not exist.");
-			return NULL;
+			if($default == NULL)
+				$this->throwWarning("Pool '$pool' does not exist.");
+			return $default;
 		}
+		
+		if(!isset($this->pool[$pool][$name]))
+			return $default;
 		
 		return $this->pool[$pool][$name];
 	}
@@ -1082,6 +1090,14 @@ class CMDataModel extends CMError implements CMClass {
 	 */
 	public function __toString() {
 		return "<" . get_class($this) . ">";
+	}
+	
+	/**
+	 * @brief Get all pools.
+	 * @return Multidimentional array of pools.
+	 */
+	public function getPools() {
+		return $this->pool;
 	}
 	
 }
