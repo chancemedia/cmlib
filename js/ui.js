@@ -1,3 +1,24 @@
+var windowResizeStack = [];
+
+function _windowResize() {
+	// resize all of the objects on the object stack
+	for(var i = 1; i < windowResizeStack.length; i += 2)
+		windowResizeStack[i]();
+}
+
+function _addWindowResizeObject(name, func) {
+	// for objects already on the stack we just replace the resizing function
+	for(var i = 0; i < windowResizeStack.length; i += 2) {
+		if(windowResizeStack[i] == name) {
+			windowResizeStack[i + 1] = func;
+			return;
+		}
+	}
+	
+	// new object - add it to the stack
+	windowResizeStack.push(name, func);
+}
+
 function getWindowHeight() {
 	// the more standards compliant browsers (mozilla/netscape/opera/IE7) use window.innerWidth and window.innerHeight
 	if(typeof window.innerHeight != 'undefined')
@@ -39,9 +60,13 @@ function undimWindow() {
 	obj.style.width = '0px';
 }
 
+function _windowWrite(html) {
+	document.getElementsByTagName('body').item(0).innerHTML += html;
+}
+
 function _createWindowDim() {
 	if(document.getElementById('window_dim') == null)
-		document.getElementsByTagName('body').item(0).innerHTML += '<div id="window_dim" style="">&nbsp;</div>';
+		_windowWrite('<div id="window_dim" style="">&nbsp;</div>');
 }
 
 function dimWindow(opacity, onclick) {
@@ -55,12 +80,12 @@ function dimWindow(opacity, onclick) {
 	obj.style.width = getWindowWidth() + 'px';
 	obj.style.position = 'absolute';
 	
-	// resize with window resize
-	window.onresize = function() {
+	// resize with window
+	_addWindowResizeObject('window_dim', function() {
 		var obj = document.getElementById('window_dim');
 		obj.style.height = getWindowHeight() + 'px';
 		obj.style.width = getWindowWidth() + 'px';
-	}
+	});
 	
 	// actions
 	if(onclick != null)
@@ -93,3 +118,29 @@ function undimWindowSmooth(opacity, totalTime) {
 	runTimeline('dimWindow(%)', opacity, 0.0, totalTime / 0.1, totalTime);
 	setTimeout('undimWindow()', (totalTime * 1000) + 10);
 }
+
+function createModalWindow(name, url, width, height) {
+	// if the modal window already exists we won't create it again
+	if(document.getElementById(name) == null)
+		_windowWrite('<iframe id="' + name + '" style="" src="' + url + '">&nbsp;</div>');
+		
+	// set the size of the modal window
+	var obj = document.getElementById(name);
+	obj.style.backgroundColor = 'white';
+	obj.style.border = 'solid 1px black';
+	obj.style.top = '50px';
+	obj.style.left = '50px';
+	obj.style.height = (getWindowHeight() - 100) + 'px';
+	obj.style.width = (getWindowWidth() - 100) + 'px';
+	obj.style.position = 'absolute';
+	
+	// resize with window
+	_addWindowResizeObject(name, function() {
+		var obj = document.getElementById(name);
+		obj.style.height = (getWindowHeight() - 100) + 'px';
+		obj.style.width = (getWindowWidth() - 100) + 'px';
+	});
+}
+
+// setup environment
+window.onresize = _windowResize;
