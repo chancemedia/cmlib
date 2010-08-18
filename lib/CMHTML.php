@@ -41,13 +41,13 @@ class CMHTML implements CMClass {
 				$a[$k] = $a[$k]->fetchAll('cell', 'vertical');
 		}
 		
+		// get the table id or create one, we may need this later
+		$table_id = substr(md5(time()), 0, 8);
+		if(isset($a['table.id']))
+			$table_id = $a['table.id'];
+		
 		// create the <table> tag
-		$r = "<table";
-		foreach($a as $k => $v) {
-			if(in_array($k, array('cellpadding', 'cellspacing', 'border', 'style', 'class', 'id', 'name', 'width')))
-				$r .= " $k=\"$v\"";
-		}
-		$r .= ">";
+		$r = CMHTML::BuildTag('table', 'table.', $a);
 		
 		// find the maximum amount of columns
 		$cols = 1;
@@ -64,15 +64,12 @@ class CMHTML implements CMClass {
 		// generate header (and save for later)
 		$header = '';
 		if(isset($a['header'])) {
-			$header .= "<tr>";
-			
-			if(isset($a['thstyle']))
-				$thstyle = ' style="' . $a['thstyle'] . '"';
+			$header .= CMHTML::BuildTag('tr', 'thead.', $a);
 			
 			foreach($a['header'] as $cell)
-				$header .= "<th$thstyle>$cell</th>";
+				$header .= CMHTML::BuildTag('th', 'th.', $a) . $cell . '</th>';
 				
-			$header .= "</tr>";
+			$header .= '</tr>';
 			$r .= $header;
 		}
 		
@@ -80,44 +77,36 @@ class CMHTML implements CMClass {
 		if(is_array($a['data'])) {
 			$rowid = 0;
 			foreach($a['data'] as $row) {
-				$trstyle = '';
-				if(isset($row['style']))
-					$trstyle = ' style="' . $row['style'] . '"';
-				elseif(isset($a['trstyle'])) {
-					if(is_object($a['trstyle']))
-						$trstyle = ' style="' . $a['trstyle'](array_merge($row, array('rowid' => $rowid))) . '"';
-					else
-						$trstyle = ' style="' . $a['trstyle'] . '"';
-				}
-				
-				$r .= "<tr$trstyle>";
-				
 				if(!is_array($row))
 					$row = array($row);
 				
+				// create id
+				if(isset($a['ids']) && $a['ids'])
+					$row['tr.id'] = "{$table_id}_tr$rowid";
+				
+				$r .= CMHTML::BuildTag('tr', 'tr.', $a, $row, array_merge($row, array('rowid' => $rowid)));
+				
 				$i = 0;
 				foreach($row as $k => $cell) {
-					// skip style
-					if(!is_numeric($k))
+					// create id
+					if(isset($a['ids']) && $a['ids'])
+						$row['td.id'] = "{$table_id}_tr{$rowid}_td$i";
+					if(CMHTML::CountColumns($row) != $cols)
+						$row['td.colspan'] = $cols - CMHTML::CountColumns($row) + 1;
+						
+					// skip tag attributes
+					if(substr($k, 0, 3) == 'tr.' || substr($k, 0, 3) == 'td.')
 						continue;
 						
-					$tdstyle = '';
-					if(isset($row["style@$i"]))
-						$tdstyle = ' style="' . $row["style@$i"] . '"';
-					elseif(isset($row["tdstyle"])) {
-						if(is_object($row["tdstyle"]))
-							$tdstyle = ' style="' . $row["tdstyle"](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+					// data replacer
+					if(isset($a["data@$i"])) {
+						if(is_object($a["data@$i"]))
+							$cell = $a["data@$i"](array_merge($row, array('rowid' => $rowid, 'colid' => $i)));
 						else
-							$tdstyle = ' style="' . $row["tdstyle"] . '"';
-					}
-					elseif(isset($a['tdstyle'])) {
-						if(is_object($a['tdstyle']))
-							$tdstyle = ' style="' . $a['tdstyle'](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
-						else
-							$tdstyle = ' style="' . $a['tdstyle'] . '"';
+							$cell = $a["data@$i"];
 					}
 						
-					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, $cols, $tdstyle);
+					$r .= CMHTML::BuildTag('td', 'td.', $a, $row, array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . $cell . '</td>';
 					++$i;
 				}
 					
@@ -134,37 +123,31 @@ class CMHTML implements CMClass {
 		elseif($a['data'] instanceof CMQueryProtocol) {
 			$rowid = 0;
 			while($row = $a['data']->fetch()) {
-				$trstyle = '';
-				if(isset($row['style']))
-					$trstyle = ' style="' . $row['style'] . '"';
-				elseif(isset($a['trstyle'])) {
-					if(is_object($a['trstyle']))
-						$trstyle = ' style="' . $a['trstyle'](array_merge($row, array('rowid' => $rowid))) . '"';
-					else
-						$trstyle = ' style="' . $a['trstyle'] . '"';
-				}
-						
-				$r .= "<tr$trstyle>";
+				// create id
+				if(isset($a['ids']) && $a['ids'])
+					$row['tr.id'] = "{$table_id}_tr$rowid";
+				
+				$r .= CMHTML::BuildTag('tr', 'tr.', $a, $row, array_merge($row, array('rowid' => $rowid)));
 						
 				$i = 0;
-				foreach($row as $cell) {
-					$tdstyle = '';
-					if(isset($row["style@$i"]))
-						$tdstyle = ' style="' . $row["style@$i"] . '"';
-					elseif(isset($row["tdstyle"])) {
-						if(is_object($row["tdstyle"]))
-							$tdstyle = ' style="' . $row["tdstyle"](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
+				foreach($row as $k => $v) {
+					// create id and colspan
+					if(isset($a['ids']) && $a['ids'])
+						$row['td.id'] = "{$table_id}_tr{$rowid}_td$i";
+					
+					// skip tag attributes
+					if(substr($k, 0, 3) == 'tr.' || substr($k, 0, 3) == 'td.')
+						continue;
+						
+					// data replacer
+					if(isset($a["data@$i"])) {
+						if(is_object($a["data@$i"]))
+							$v = $a["data@$i"](array_merge($row, array('rowid' => $rowid, 'colid' => $i)));
 						else
-							$tdstyle = ' style="' . $row["tdstyle"] . '"';
-					}
-					elseif(isset($a['tdstyle'])) {
-						if(is_object($a['tdstyle']))
-							$tdstyle = ' style="' . $a['tdstyle'](array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . '"';
-						else
-							$tdstyle = ' style="' . $a['tdstyle'] . '"';
+							$v = $a["data@$i"];
 					}
 						
-					$r .= CMHTML::RenderCell($rowid, $a, $i, $row, $cell, 0, $tdstyle);
+					$r .= CMHTML::BuildTag('td', 'td.', $a, $row, array_merge($row, array('rowid' => $rowid, 'colid' => $i))) . $v . '</td>';
 					++$i;
 				}
 				
@@ -182,32 +165,47 @@ class CMHTML implements CMClass {
 	}
 	
 	/**
-	 * @brief Render a table cell.
-	 * @param $rowid
-	 * @param $a
-	 * @param $i
-	 * @param $row
-	 * @param $cell
-	 * @param $cols
-	 * @param $tdstyle
-	 * @return Rendered table cell.
+	 * @brief Internal method to generate a openeing HTML tag.
+	 * @param $tag Actual HTML tag.
+	 * @param $look The prefix to look for.
+	 * @param $a Global attributes.
+	 * @param $row Table row.
+	 * @param $args Callback args.
+	 * @return HTML open tag.
 	 */
-	private static function RenderCell($rowid, $a, $i, $row, $cell, $cols, $tdstyle) {
-		// look for the data replacer
-		if(isset($a["data@$i"])) {
-			if(is_object($a["data@$i"]))
-				$cell = $a["data@$i"](array_merge($row, array('rowid' => $rowid, 'colid' => $i)));
-			else
-				$cell = $a["data@$i"];
+	private static function BuildTag($tag, $look, $a, $row = array(), $args = false) {
+		$r = "<$tag";
+		$attr = array();
+		
+		// create an array with parent and child attributes
+		foreach($a as $k => $v) {
+			if(substr($k, 0, strlen($look)) == $look && strpos($k, '@') === false)
+				$attr[substr($k, strlen($look))] = $v;
+		}
+		foreach($row as $k => $v) {
+			if(substr($k, 0, strlen($look)) == $look && strpos($k, '@') === false)
+				$attr[substr($k, strlen($look))] = $v;
 		}
 		
-		$r = "<td$tdstyle";
-		$count = CMHTML::CountColumns($row);
-		if($count != $cols)
-			$r .= ' colspan="' . ($cols - $count + 1) . '"';
-		$r .= ">$cell</td>";
-						
-		return $r;
+		if(isset($args['colid'])) {
+			foreach($row as $k => $v) {
+				$pos = strpos($k, '@');
+				if($pos !== false && substr($k, $pos + 1) == $args['colid']) {
+					$pos2 = strpos($k, '.');
+					$attr[substr($k, $pos2 + 1, $pos - $pos2 - 1)] = $v;
+				}
+			}
+		}
+		
+		// create tag
+		foreach($attr as $k => $v) {
+			if(is_object($v))
+				$r .= " $k=\"" . $v($args) . '"';
+			else
+				$r .= " $k=\"$v\"";
+		}
+		
+		return "$r>";
 	}
 	
 	/**
