@@ -6,11 +6,11 @@ include_once('CMObject.php');
  * @brief This is used in conjuction with CMStyle to validate CSS styles.
  * 
  * All possible validation rules are;
- * -# @font
- * -# @fontlist
- * -# @percent
- * -# @length
- * -# @int
+ * -# \@font
+ * -# \@fontlist
+ * -# \@percent
+ * -# \@length
+ * -# \@int
  * 
  * @author Elliot Chance
  */
