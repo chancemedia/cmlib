@@ -99,13 +99,18 @@ class CMPostgreSQLQuery implements CMQueryProtocol {
 			$r = pg_fetch_array($this->query, NULL, PGSQL_BOTH);
 		elseif($rowMode == 'pair') {
 			$r = pg_fetch_row($this->query);
-			if(!$r) return false;
+			if(!$r)
+				return false;
 			$r = array($r[0] => $r[1]);
-		} elseif($rowMode == 'cell') {
+		}
+		elseif($rowMode == 'cell') {
 			$r = pg_fetch_row($this->query);
-			if(!$r) return false;
+			if(!$r)
+				return false;
 			$r = $r[0];
-		} else $r = false;
+		}
+		else
+			$r = false;
 		
 		// apply formatter
 		if($formatter !== false)
@@ -137,8 +142,12 @@ class CMPostgreSQLQuery implements CMQueryProtocol {
 				if(is_array($row)) {
 					foreach($row as $k => $v)
 						$r[] = $v;
-				} else $r[] = $row;
-			} else return false;
+				}
+				else
+					$r[] = $row;
+			}
+			else
+				return false;
 		}
 		
 		return $r;
