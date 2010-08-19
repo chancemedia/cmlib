@@ -1100,6 +1100,29 @@ class CMDataModel extends CMError implements CMClass {
 		return $this->pool;
 	}
 	
+	/**
+	 * @brief Set a variable if it doesn't exist.
+	 *
+	 * If the variable does exist this function will have no effect. If the pool does not exist
+	 * it will be created.
+	 *
+	 * @param $name The name of the variable in the pool.
+	 * @param $pool The name of the pool.
+	 * @param $value Value to set.
+	 * @return The value of variable which may be the value of the already exists variable or the
+	 *         newly assigned value.
+	 */
+	public function setDefault($name, $value = false, $pool = 'public') {
+		// if the pool doesn't exist we are allowed to create it
+		if(!$this->poolExists($pool))
+			$this->addPool($pool);
+		
+		if(!$this->exists($name, $pool))
+			$this->set($name, $value, $pool);
+		
+		return $this->get($name, $pool);
+	}
+	
 }
 
 // make sure the session is started
