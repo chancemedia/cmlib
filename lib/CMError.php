@@ -198,6 +198,15 @@ class CMError implements CMClass {
 	}
 	
 	/**
+	 * @brief Generate the human-readable error message.
+	 * @param $a Attributes provided from _backtrace.
+	 * @return String message.
+	 */
+	private function generateErrorMessage($a) {
+		return "Error thrown from " . $a['file'] . " at line " . $a['line'] . " in " . $a['class'] . "::" . $a['function'] . '().';
+	}
+	
+	/**
 	 * @brief Push an error onto the error stack.
 	 * 
 	 * This is private because your must use one of the throw methods.
@@ -219,7 +228,12 @@ class CMError implements CMClass {
 				$toStack[$k] = $v;
 				
 			array_push($this->errorStack, $toStack);
-		} else $this->errorStack->pushError($type, $attr);
+			
+			// return message
+			return $this->generateErrorMessage($toStack['_backtrace'][count($toStack['_backtrace']) - 1]);
+		}
+		else
+			$this->errorStack->pushError($type, $attr);
 		
 		return false;
 	}
@@ -240,16 +254,19 @@ class CMError implements CMClass {
 			die($msg);
 			
 		// print the message
+		$print = false;
 		if($msg != "") {
 			if(is_array($this->errorStack) && $type >= $this->verboseLevel)
-				echo $msg, "\n";
+				$print = true;
 			else if($this->errorStack instanceof CMError && $type >= $this->errorStack->verboseLevel)
-				echo $msg, "\n";
+				$print = true;
 		}
 		
 		// push the error onto the stack
 		$attr['_reason'] = $msg;
-		$this->pushError($type, $attr);
+		$report = $this->pushError($type, $attr);
+		if($print)
+			echo $report . "\n";
 		
 		return false;
 	}
