@@ -196,9 +196,11 @@ function createModalWindow(name, url, width, height) {
 	// if the modal window already exists we won't create it again
 	if(document.getElementById(name) == null)
 		_windowWrite('<iframe id="' + name + '" style="" src="' + url + '">&nbsp;</div>');
-		
-	// but we do make sure its displayed
-	document.getElementById(name).style.display = '';
+	else {
+		// but we do make sure its displayed and refreshed
+		document.getElementById(name).style.display = '';
+		document.getElementById(name).contentWindow.location.reload(true);
+	}
 		
 	// set the size of the modal window
 	var obj = document.getElementById(name);
@@ -258,6 +260,12 @@ function closeModalWindow(name) {
 	if(window.parent.document != null)
 		return _closeModalWindow(window.parent.document, name);
 	return _closeModalWindow(document, name);
+}
+
+function isEmpty(obj) {
+	if(document.getElementById(obj) == null)
+		return true;
+	return document.getElementById(obj).value == '';
 }
 
 // setup environment
