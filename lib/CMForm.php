@@ -362,17 +362,21 @@ class CMForm implements CMClass {
 			return $a['value'] . '&nbsp;';
 		}
 		$html = "<select " . CMForm::MainAttributes($a) . ">";
-		foreach($a['data'] as $d) {
-			if(!is_array($d))
-				$d = array($d, $d);
-			$html .= '<option value="' . $d[0] . '"';
-			if($d[0] == $a['value']) $html .= ' selected';
-			$html .= '>';
-			if($a['html'] === false)
-				$html .= htmlspecialchars($d[1]);
-			else $html .= $d[1];
-			$html .= '</option>';
+		
+		if(isset($a['data']) && is_array($a['data'])) {
+			foreach($a['data'] as $d) {
+				if(!is_array($d))
+					$d = array($d, $d);
+				$html .= '<option value="' . $d[0] . '"';
+				if($d[0] == $a['value']) $html .= ' selected';
+				$html .= '>';
+				if($a['html'] === false)
+					$html .= htmlspecialchars($d[1]);
+				else $html .= $d[1];
+				$html .= '</option>';
+			}
 		}
+		
 		$html .= "</select>";
 		return $html;
 	}
