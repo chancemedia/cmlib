@@ -1,13 +1,28 @@
 <?php
 
+/**
+ * @brief Drawing HTML boxes/containers.
+ * @author Elliot Chance
+ */
 class CMBox {
 	
+	/**
+	 * @brief Default attributes.
+	 */
 	public $a;
 	
+	/**
+	 * @brief Initialise box object.
+	 * @param $a Attributes.
+	 */
 	public function CMBox(array $a = array()) {
 		$this->a = $a;
 	}
 	
+	/**
+	 * @brief Draw a new box.
+	 * @param $attr Overriding attributes.
+	 */
 	public function draw(array $attr = array()) {
 		// overrides
 		$a = $this->a;
