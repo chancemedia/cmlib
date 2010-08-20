@@ -701,23 +701,36 @@ class CMDataModel extends CMError implements CMClass {
 	 * This is mostly and internal method, it is public because other classes need to use it.
 	 * 
 	 * @param $name The variable unspecific to any pool.
+	 * @param $a Default attributes.
 	 * @return A two element array of the bare name and value. If the variable doesn't exist in the
 	 *         pool NULL is returned for the second array element.
 	 */
-	public function extractNameValue($name) {
+	public function extractNameValue($name, $a = array()) {
 		$pos = strpos($name, '[');
 		if($pos !== false) {
 			$pool = substr($name, 0, $pos);
 			$newname = substr($name, $pos + 1, strlen($name) - $pos - 2);
 			
+			$value = '';
+			if(isset($a['name']))
+				$name = $a['name'];
 			if(isset($this->pool[$pool][$newname]))
-				return array($name, $this->pool[$pool][$newname]);
-			return array($name, NULL);
+				$value = $this->pool[$pool][$newname];
+			if(isset($a['value']))
+				$value = $a['value'];
+			
+			return array($name, $value);
 		}
-		
+			
+		$value = '';
+		if(isset($a['name']))
+			$name = $a['name'];
 		if(isset($this->pool['public'][$name]))
-			return array($name, $this->pool['public'][$name]);
-		return array($name, NULL);
+			$value = $this->pool['public'][$name];
+		if(isset($a['value']))
+			$value = $a['value'];
+			
+		return array($name, $value);
 	}
 	
 	/**
@@ -734,7 +747,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function textBox($name = 'textbox', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::TextBox($a);
 	}
 	
@@ -752,7 +765,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function passwordBox($name = 'password', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::PasswordBox($a);
 	}
 	
@@ -770,7 +783,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function submitButton($name = 'submit', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::SubmitButton($a);
 	}
 	
@@ -788,7 +801,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function resetButton($name = 'reset', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::ResetButton($a);
 	}
 	
@@ -806,7 +819,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function button($name = 'button', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::Button($a);
 	}
 	
@@ -824,7 +837,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function hidden($name = 'hidden', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::Hidden($a);
 	}
 	
@@ -845,7 +858,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function menu($name = 'menu', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::Menu($a);
 	}
 	
@@ -863,7 +876,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function checkbox($name = 'checkbox', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		$a['checked'] = $this->determineChecked($a['value']);
 		return CMForm::Checkbox($a);
 	}
@@ -885,7 +898,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function listBox($name = 'listbox', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::ListBox($a);
 	}
 	
@@ -906,7 +919,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function radioGroup($name = 'radiogroup', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::RadioGroup($a);
 	}
 	
@@ -927,7 +940,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function checkboxGroup($name = 'checkboxgroup', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::CheckboxGroup($a);
 	}
 	
@@ -945,7 +958,7 @@ class CMDataModel extends CMError implements CMClass {
 	 * @param $a The options to be passed directly to CMForm.
 	 */
 	public function textArea($name = 'textarea', $a = false) {
-		list($a['name'], $a['value']) = $this->extractNameValue($name);
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
 		return CMForm::TextArea($a);
 	}
 	
