@@ -197,6 +197,9 @@ function createModalWindow(name, url, width, height) {
 	if(document.getElementById(name) == null)
 		_windowWrite('<iframe id="' + name + '" style="" src="' + url + '">&nbsp;</div>');
 		
+	// but we do make sure its displayed
+	document.getElementById(name).style.display = '';
+		
 	// set the size of the modal window
 	var obj = document.getElementById(name);
 	obj.style.backgroundColor = 'white';
@@ -238,6 +241,23 @@ function createModalWindow(name, url, width, height) {
 		obj.style.top = ((getWindowHeight() - parseInt(obj.style.height)) / 2) + 'px';
 		obj.style.left = ((getWindowWidth() - parseInt(obj.style.width)) / 2) + 'px';
 	});
+}
+
+function _closeModalWindow(docobj, name) {
+	// make sure the modal window object exists
+	if(docobj.getElementById(name) == null)
+		return false;
+	
+	// closing the modal window simply makes it invisible, so closing it multiple times should have
+	// no effect
+	docobj.getElementById(name).style.display = 'none';
+	return true;
+}
+
+function closeModalWindow(name) {
+	if(window.parent.document != null)
+		return _closeModalWindow(window.parent.document, name);
+	return _closeModalWindow(document, name);
 }
 
 // setup environment
