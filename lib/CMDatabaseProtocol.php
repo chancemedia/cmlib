@@ -685,6 +685,261 @@ interface CMDatabaseProtocol extends CMClass {
 	 */
 	public function escapeEntity($str);
 	
+	/**
+	 * @brief Describe the columns in a table.
+	 * 
+	 * The result is based on the SQL standard information_schema. Using the following table as an
+	 * example:
+	 * <pre>
+	 * CREATE TABLE mytable (
+	 *   id integer default 0,
+	 *   sometext varchar(255) not null
+	 * );
+	 * </pre>
+	 * 
+	 * The result of <tt>information_schema.columns</tt> may look like this (table has been split):
+	 * <table>
+	 *   <tr>
+	 *     <th>table_catalog</th>
+	 *     <th>table_schema</th>
+	 *     <th>table_name</th>
+	 *     <th>column_name</th>
+	 *     <th>ordinal_position</th>
+	 *     <th>column_default</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>postgres </td>
+	 *     <td>public </td>
+	 *     <td>mytable </td>
+	 *     <td>id </td>
+	 *     <td> 1</td>
+	 *     <td>0 </td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>postgres </td>
+	 *     <td>public </td>
+	 *     <td>mytable </td>
+	 *     <td>sometext </td>
+	 *     <td> 2</td>
+	 *     <td></td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>is_nullable</th>
+	 *     <th>data_type</th>
+	 *     <th>character_maximum_length</th>
+	 *     <th>character_octet_length</th>
+	 *     <th>numeric_precision</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>YES </td>
+	 *     <td>integer </td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td> 32</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>NO</td>
+	 *     <td>character varying</td>
+	 *     <td> 255</td>
+	 *     <td> 1073741824</td>
+	 *     <td></td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>numeric_precision_radix</th>
+	 *     <th>numeric_scale</th>
+	 *     <th>datetime_precision</th>
+	 *     <th>interval_type</th>
+	 *     <th>interval_precision</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>2</td>
+	 *     <td> 0</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>character_set_catalog</th>
+	 *     <th>character_set_schema</th>
+	 *     <th>character_set_name</th>
+	 *     <th>collation_catalog</th>
+	 *     <th>collation_schema</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>collation_name</th>
+	 *     <th>domain_catalog</th>
+	 *     <th>domain_schema</th>
+	 *     <th>domain_name</th>
+	 *     <th>udt_catalog</th>
+	 *     <th>udt_schema</th>
+	 *     <th>udt_name</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>postgres </td>
+	 *     <td>pg_catalog</td>
+	 *     <td>int4 </td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>postgres </td>
+	 *     <td>pg_catalog</td>
+	 *     <td>varchar </td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>scope_catalog</th>
+	 *     <th>scope_schema</th>
+	 *     <th>scope_name</th>
+	 *     <th>maximum_cardinality</th>
+	 *     <th>dtd_identifier</th>
+	 *     <th>is_self_referencing</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>1 </td>
+	 *     <td>NO </td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>2 </td>
+	 *     <td>NO </td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>is_identity</th>
+	 *     <th>identity_generation</th>
+	 *     <th>identity_start</th>
+	 *     <th>identity_increment</th>
+	 *     <th>identity_maximum</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>NO </td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>NO </td>
+	 *     <td>&nbsp;</td>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td></td>
+	 *   </tr>
+	 * </table>
+	 * <table>
+	 *   <tr>
+	 *     <th>identity_minimum</th>
+	 *     <th>identity_cycle</th>
+	 *     <th>is_generated</th>
+	 *     <th>generation_expression</th>
+	 *     <th>is_updatable</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>NEVER</td>
+	 *     <td></td>
+	 *     <td>YES</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td></td>
+	 *     <td></td>
+	 *     <td>NEVER</td>
+	 *     <td></td>
+	 *     <td>YES</td>
+	 *   </tr>
+	 * </table>
+	 * 
+	 * The array returned contains all off the above attributes that can be accessed through the column
+	 * number or the column name.
+	 * @code
+	 * print_r($dbh->describeTable("mytable"));
+	 * @endcode
+	 * 
+	 * <pre>
+	 * Array (
+	 *   [0] => Array (
+	 *     [table_catalog] => postgres
+	 *     [table_schema] => public
+	 *     [table_name] => mytable
+	 *     [column_name] => id
+	 *     ...
+	 *   ),
+	 *   [1] => Array (
+	 *     [table_catalog] => postgres
+	 *     [table_schema] => public
+	 *     [table_name] => mytable
+	 *     [column_name] => sometext
+	 *     ...
+	 *   ),
+	 *   [id] => Array (
+	 *     [table_catalog] => postgres
+	 *     [table_schema] => public
+	 *     [table_name] => mytable
+	 *     [column_name] => id
+	 *     ...
+	 *   ),
+	 *   [sometext] => Array (
+	 *     [table_catalog] => postgres
+	 *     [table_schema] => public
+	 *     [table_name] => mytable
+	 *     [column_name] => sometext
+	 *     ...
+	 *   )
+	 * )
+	 * </pre>
+	 * 
+	 * @return An array as described above.
+	 * @param $tableName The name of the table.
+	 * @param $a Extra attributes.
+	 */
+	public function describeTable($tableName, $a = array());
+	
 }
 
 ?>

@@ -925,6 +925,16 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	public function escapeEntity($str) {
 		return $str;
 	}
+	
+	/**
+	 * @brief Describe a table.
+	 * @notimp
+	 * @param $tableName The name of the table.
+	 * @param $a Extra attributes. Ignored.
+	 */
+	public function describeTable($tableName, $a = array()) {
+		return false;
+	}
 
 }
 

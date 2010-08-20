@@ -549,6 +549,19 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	}
 	
 	/**
+	 * @brief Describe a table.
+	 * @param $tableName The name of the table.
+	 * @param $a Extra attributes. Ignored.
+	 */
+	public function describeTable($table, $a = array()) {
+		$byid = $this->query("select * from information_schema.columns where table_name=? order by ordinal_position", $table)->fetchAll();
+		$byname = array();
+		foreach($byid as $v)
+			$byname[$v['column_name']] = $v;
+		return array_merge($byid, $byname);
+	}
+	
+	/**
 	 * @brief Fetch the list of tables in the active database.
 	 * 
 	 * @param $schema Optional. Filter to a specific schema.

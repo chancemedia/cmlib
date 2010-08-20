@@ -1738,6 +1738,16 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 		return "`$str`";
 	}
 	
+	/**
+	 * @brief Describe a table.
+	 * @notimp
+	 * @param $tableName The name of the table.
+	 * @param $a Extra attributes. Ignored.
+	 */
+	public function describeTable($tableName, $a = array()) {
+		return false;
+	}
+	
 }
 
 ?>
