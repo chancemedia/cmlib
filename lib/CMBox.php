@@ -23,8 +23,14 @@ class CMBox {
 		$r .= ">";
 		
 		// title
-		if(isset($a['title']))
-			$r .= "<tr><td style=\"background-color: #CCCCCC\">$a[title]</td></tr>";
+		if(isset($a['title'])) {
+			$r .= "<tr><td";
+			foreach($a as $k => $v) {
+				if(substr($k, 0, 6) == 'title.')
+					$r .= " " . substr($k, 6) . "=\"$v\"";
+			}
+			$r .= ">$a[title]</td></tr>";
+		}
 			
 		// body
 		$r .= "<tr><td>$a[body]</td></tr>";
