@@ -1,5 +1,17 @@
 var windowResizeStack = [];
 
+String.prototype.startsWith = function(str) {
+	return this.match("^" + str) == str;
+}
+
+String.prototype.endsWith = function(str) {
+	return this.match(str + "$") == str;
+}
+
+String.prototype.trim = function() {
+	return this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "");
+}
+
 function _windowResize() {
 	// resize all of the objects on the object stack
 	for(var i = 1; i < windowResizeStack.length; i += 2)
@@ -119,6 +131,17 @@ function undimWindowSmooth(opacity, totalTime) {
 	setTimeout('undimWindow()', (totalTime * 1000) + 10);
 }
 
+function isNumeric(num) {
+	var validChars = "0123456789.";
+	
+	for(var i = 0; i < num.length; ++i) {
+		if(validChars.indexOf(num.charAt(i)) == -1)
+			return false;
+	}
+			
+	return true;
+}
+
 function createModalWindow(name, url, width, height) {
 	// if the modal window already exists we won't create it again
 	if(document.getElementById(name) == null)
@@ -128,17 +151,42 @@ function createModalWindow(name, url, width, height) {
 	var obj = document.getElementById(name);
 	obj.style.backgroundColor = 'white';
 	obj.style.border = 'solid 1px black';
-	obj.style.top = '50px';
-	obj.style.left = '50px';
-	obj.style.height = (getWindowHeight() - 100) + 'px';
-	obj.style.width = (getWindowWidth() - 100) + 'px';
+	
+	// set size
+	if(isNumeric(height))
+		obj.style.height = height + 'px';
+	else
+		obj.style.height = (getWindowHeight() * (parseInt(height) / 100)) + 'px';
+		
+	if(isNumeric(width))
+		obj.style.width = width + 'px';
+	else
+		obj.style.width = (getWindowWidth() * (parseInt(width) / 100)) + 'px';
+		
+	// move the modal window to the centre of the screen
+	obj.style.top = ((getWindowHeight() - parseInt(obj.style.height)) / 2) + 'px';
+	obj.style.left = ((getWindowWidth() - parseInt(obj.style.width)) / 2) + 'px';
+	
 	obj.style.position = 'absolute';
 	
 	// resize with window
 	_addWindowResizeObject(name, function() {
 		var obj = document.getElementById(name);
-		obj.style.height = (getWindowHeight() - 100) + 'px';
-		obj.style.width = (getWindowWidth() - 100) + 'px';
+	
+		// set size
+		if(isNumeric(height))
+			obj.style.height = height + 'px';
+		else
+			obj.style.height = (getWindowHeight() * (parseInt(height) / 100)) + 'px';
+			
+		if(isNumeric(width))
+			obj.style.width = width + 'px';
+		else
+			obj.style.width = (getWindowWidth() * (parseInt(width) / 100)) + 'px';
+			
+		// move the modal window to the centre of the screen
+		obj.style.top = ((getWindowHeight() - parseInt(obj.style.height)) / 2) + 'px';
+		obj.style.left = ((getWindowWidth() - parseInt(obj.style.width)) / 2) + 'px';
 	});
 }
 
