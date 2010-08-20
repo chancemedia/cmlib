@@ -543,14 +543,16 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($values[$i] instanceof CMConstant)
 					$new_sql .= $parts[$i] . $values[$i];
-				else $new_sql .= $parts[$i] . "'" . str_replace("'", "''", $values[$i]) . "'";
+				else
+					$new_sql .= $parts[$i] . "'" . str_replace("'", "''", $values[$i]) . "'";
 			}
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
 			if($values instanceof CMConstant)
 				$sql = str_replace('?', $values, $sql);
-			else $sql = str_replace('?', "'" . str_replace("'", "''", $values) . "'", $sql);
+			else
+				$sql = str_replace('?', "'" . str_replace("'", "''", $values) . "'", $sql);
 		}
 			
 		return $sql;
@@ -587,8 +589,9 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
+				$sql .= $v;
+			else
 				$sql .= "'" . str_replace("'", "''", $v) . "'";
-			else $sql .= $v;
 				
 			$first = false;
 		}
@@ -816,7 +819,8 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= "$k=$v";
-			else $sql .= "$k='" . str_replace("'", "''", $v) . "'";
+			else
+				$sql .= "$k='" . str_replace("'", "''", $v) . "'";
 			
 			$first = false;
 		}
@@ -831,7 +835,8 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . str_replace("'", "''", $v) . "'";
+				else
+					$sql .= "$k='" . str_replace("'", "''", $v) . "'";
 				
 				$first = false;
 			}
@@ -872,7 +877,8 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . str_replace("'", "''", $v) . "'";
+				else
+					$sql .= "$k='" . str_replace("'", "''", $v) . "'";
 				
 				$first = false;
 			}

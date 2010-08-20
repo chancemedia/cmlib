@@ -56,14 +56,16 @@ class CMHeader implements CMClass {
 				// if its a CMConstant we don't encapsulate it
 				if($values[$i] instanceof CMConstant)
 					$new_url .= $parts[$i] . $values[$i];
-				else $new_url .= $parts[$i] . "'" . urlencode($values[$i]) . "'";
+				else
+					$new_url .= $parts[$i] . "'" . urlencode($values[$i]) . "'";
 			}
 			$url = $new_url . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
 			if($values instanceof CMConstant)
 				$url = str_replace('?', $values, $url);
-			else $url = str_replace('?', "'" . urlencode($values) . "'", $url);
+			else
+				$url = str_replace('?', "'" . urlencode($values) . "'", $url);
 		}
 		
 		// change header to notify the browser to redirect

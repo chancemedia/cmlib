@@ -732,7 +732,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= $v;
-			else $sql .= "'" . mysql_real_escape_string($v) . "'";
+			else
+				$sql .= "'" . mysql_real_escape_string($v) . "'";
 			
 			$first = false;
 		}
@@ -812,7 +813,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				else {
 					if($this->driver == 'mysqli')
 						$new_sql .= $parts[$i] . "'" . $this->dbh->real_escape_string($values[$i]) . "'";
-					else $new_sql .= $parts[$i] . "'" . mysql_real_escape_string($values[$i]) . "'";
+					else
+						$new_sql .= $parts[$i] . "'" . mysql_real_escape_string($values[$i]) . "'";
 				}
 			}
 			$sql = $new_sql . $parts[count($parts) - 1];
@@ -823,7 +825,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			else {
 				if($this->driver == 'mysqli')
 					$sql = str_replace('?', "'" . $this->dbh->real_escape_string($values) . "'", $sql);
-				else $sql = str_replace('?', "'" . mysql_real_escape_string($values) . "'", $sql);
+				else
+					$sql = str_replace('?', "'" . mysql_real_escape_string($values) . "'", $sql);
 			}
 		}
 			
@@ -1614,7 +1617,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= "$k=$v";
-			else $sql .= "$k='" . mysql_real_escape_string($v) . "'";
+			else
+				$sql .= "$k='" . mysql_real_escape_string($v) . "'";
 			
 			$first = false;
 		}
@@ -1629,7 +1633,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . mysql_real_escape_string($v) . "'";
+				else
+					$sql .= "$k='" . mysql_real_escape_string($v) . "'";
 				
 				$first = false;
 			}
@@ -1694,7 +1699,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . mysql_real_escape_string($v) . "'";
+				else
+					$sql .= "$k='" . mysql_real_escape_string($v) . "'";
 				
 				$first = false;
 			}

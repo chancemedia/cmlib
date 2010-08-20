@@ -475,14 +475,16 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($values[$i] instanceof CMConstant)
 					$new_sql .= $parts[$i] . $values[$i];
-				else $new_sql .= $parts[$i] . "'" . pg_escape_string($values[$i]) . "'";
+				else
+					$new_sql .= $parts[$i] . "'" . pg_escape_string($values[$i]) . "'";
 			}
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
 			if($values instanceof CMConstant)
 				$sql = str_replace('?', $values, $sql);
-			else $sql = str_replace('?', "'" . pg_escape_string($values) . "'", $sql);
+			else
+				$sql = str_replace('?', "'" . pg_escape_string($values) . "'", $sql);
 		}
 			
 		return $sql;
@@ -533,12 +535,14 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
+				$sql .= $v;
+			else
 				$sql .= "'" . pg_escape_string($v) . "'";
-			else $sql .= $v;
 				
 			$first = false;
 		}
 		
+		echo "$sql)";
 		if($this->query("$sql)")->success())
 			return $this->query("select lastval()", false, $a)->fetch('cell');
 		return 0;
@@ -782,7 +786,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= "$k=$v";
-			else $sql .= "$k='" . pg_escape_string($v) . "'";
+			else
+				$sql .= "$k='" . pg_escape_string($v) . "'";
 			
 			$first = false;
 		}
@@ -797,7 +802,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . pg_escape_string($v) . "'";
+				else
+					$sql .= "$k='" . pg_escape_string($v) . "'";
 				
 				$first = false;
 			}
@@ -840,7 +846,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
 					$sql .= "$k=$v";
-				else $sql .= "$k='" . pg_escape_string($v) . "'";
+				else
+					$sql .= "$k='" . pg_escape_string($v) . "'";
 				
 				$first = false;
 			}
