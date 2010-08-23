@@ -418,7 +418,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$v['pass'] = '';
 		
 		// attempt to connect
-		$this->dbh = pg_connect("host={$v['host']} port={$v['port']} dbname={$v['db']} user={$v['user']} password={$v['pass']}");
+		$this->dbh = @pg_connect("host={$v['host']} port={$v['port']} dbname={$v['db']} user={$v['user']} password={$v['pass']}");
 		if(!$this->dbh) {
 			$this->throwError("Could not connect to database.");
 			return $this;
@@ -508,6 +508,30 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	}
 	
 	/**
+	 * @brief Cast PostgreSQL safe type.
+	 *
+	 * PostgreSQL is very strict with its typing, this will make sure the SQL type matches the type PostgreSQL wants.
+	 *
+	 * @return Escapes type-safe value.
+	 */
+	private function castSafeValue($value, $col) {
+		// work out the real data type
+		$type = $col['data_type'];
+		if($type == 'USER-DEFINED')
+			$type = $col['udt_name'];
+		
+		// date and time types to look out for
+		if(in_array($type, array('timestamp', 'timestamp with time zone', 'timestamp without time zone')) && trim($value) == '')
+			$value = NULL;
+		if(in_array($type, array('date', 'time')) && trim($value) == '')
+			$value = NULL;
+		
+		if($value === NULL)
+			return "NULL";
+		return "'" . pg_escape_string($value) . "'::" . $type;
+	}
+	
+	/**
 	 * @brief \c INSERT statement
 	 * 
 	 * This uses a key-value paired array to construct an INSERT statement like:
@@ -528,21 +552,25 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	 * @param $a Extra options.
 	 */
 	public function insert($name, $kv = false, $a = false) {
-		$sql = "insert into \"$name\" (" . implode(',', array_keys($kv)) . ") values (";
+		// PostgreSQL is very specific about its types so we cast every value
+		$desc = $this->describeTable($name);
+		
+		$sql = "insert into " . $this->escapeEntity($name) . " (" . implode(',', array_keys($kv));
+		$sql .= ") values (";
 		$first = true;
 		foreach($kv as $k => $v) {
-			if(!$first) $sql .= ",";
+			if(!$first)
+				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= $v;
 			else
-				$sql .= "'" . pg_escape_string($v) . "'";
+				$sql .= $this->castSafeValue($v, $desc[$k]);
 				
 			$first = false;
 		}
 		
-		echo "$sql)";
 		if($this->query("$sql)")->success())
 			return $this->query("select lastval()", false, $a)->fetch('cell');
 		return 0;
@@ -550,7 +578,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	
 	/**
 	 * @brief Describe a table.
-	 * @param $tableName The name of the table.
+	 * @param $table The name of the table.
 	 * @param $a Extra attributes. Ignored.
 	 */
 	public function describeTable($table, $a = array()) {
@@ -746,7 +774,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		if($this->dbh === false)
 			return false;
 		
-		$q = $this->query("DELETE FROM \"$tableName\" WHERE 1");
+		$q = $this->query("DELETE FROM " . $this->escapeEntity($tableName) . " WHERE 1");
 		return $q->success();
 	}
 	
@@ -770,7 +798,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		if($this->dbh === false)
 			return false;
 		
-		$q = $this->query("TRUNCATE TABLE \"$tableName\"");
+		$q = $this->query("TRUNCATE TABLE " . $this->escapeEntity($tableName));
 		return $q->success();
 	}
 	
@@ -787,11 +815,14 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	 * @param $a
 	 */
 	public function update($tableName, $newvalues, $criteria = false, $a = false) {
+		// PostgreSQL is very specific about its types so we cast every value
+		$desc = $this->describeTable($tableName);
+		
 		// $a must be an array
 		if(!is_array($a))
 			$a = array();
 		
-		$sql = "UPDATE `$tableName` SET ";
+		$sql = "UPDATE " . $this->escapeEntity($tableName) . " SET ";
 		$first = true;
 		foreach($newvalues as $k => $v) {
 			if(!$first) $sql .= ",";
@@ -800,7 +831,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			if($v instanceof CMConstant)
 				$sql .= "$k=$v";
 			else
-				$sql .= "$k='" . pg_escape_string($v) . "'";
+				$sql .= $this->castSafeValue($v, $desc[$k]);
 			
 			$first = false;
 		}
@@ -847,7 +878,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		if(!is_array($a))
 			$a = array();
 		
-		$sql = "DELETE FROM `$tableName`";
+		$sql = "DELETE FROM " . $this->escapeEntity($tableName);
 		
 		// add WHERE clause
 		if($criteria !== false) {
