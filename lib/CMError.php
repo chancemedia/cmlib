@@ -170,13 +170,25 @@ class CMError implements CMClass {
 	 * @param $error The error object.
 	 */
 	public static function PrintBackTrace($error) {
-		for($i = 3; $bt = $error['_backtrace'][$i]; ++$i) {
-			echo "  ", $bt['file'], ": line ", $bt['line'], ": ";
-			if($bt['class'] != "")
-				echo $bt['class'], "::";
-			echo $bt['function'], "()\n";
-		}
+		echo CMError::GenerateBackTrace($error);
 		return true;
+	}
+	
+	/**
+	 * @brief Generate back trace.
+	 * @param $error The error object.
+	 * @see PrintBackTrace()
+	 */
+	public static function GenerateBackTrace($error) {
+		$r = "Error";
+		if(isset($error['_reason']))
+			$r .= " \"$error[_reason]\"";
+		$r .= " thrown";
+		for($i = 2; $i < count($error['_backtrace'][$i]); ++$i) {
+			$msg = CMError::GenerateErrorMessage($error['_backtrace'][$i]);
+			$r .= "\n  " . substr($msg, strpos($msg, 'thrown') + 7);
+		}
+		return $r;
 	}
 	
 	/**
@@ -202,8 +214,18 @@ class CMError implements CMClass {
 	 * @param $a Attributes provided from _backtrace.
 	 * @return String message.
 	 */
-	private function generateErrorMessage($a) {
-		return "Error thrown from " . $a['file'] . " at line " . $a['line'] . " in " . $a['class'] . "::" . $a['function'] . '().';
+	private static function GenerateErrorMessage($a) {
+		$msg = "Error thrown ";
+		if(isset($a['file']))
+			$msg .= "from " . $a['file'];
+		if(isset($a['line']))
+			$msg .= " at line " . $a['line'];
+		$msg .= " in ";
+		if(isset($a['class']))
+			$msg .= $a['class'] . "::";
+		if(isset($a['function']))
+			$msg .= $a['function'] . '().';
+		return $msg;
 	}
 	
 	/**
@@ -230,7 +252,7 @@ class CMError implements CMClass {
 			array_push($this->errorStack, $toStack);
 			
 			// return message
-			return $this->generateErrorMessage($toStack['_backtrace'][count($toStack['_backtrace']) - 1]);
+			return $this->GenerateBackTrace($toStack);
 		}
 		else
 			$this->errorStack->pushError($type, $attr);
