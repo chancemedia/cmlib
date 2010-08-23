@@ -585,7 +585,8 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 		$sql = "insert into $name (" . implode(',', array_keys($kv)) . ") values (";
 		$first = true;
 		foreach($kv as $k => $v) {
-			if(!$first) $sql .= ",";
+			if(!$first)
+				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
