@@ -180,15 +180,24 @@ class CMError implements CMClass {
 	 * @see PrintBackTrace()
 	 */
 	public static function GenerateBackTrace($error) {
-		$r = "Error";
+		$r = "<pre>\nError thrown:";
 		if(isset($error['_reason']))
-			$r .= " \"$error[_reason]\"";
-		$r .= " thrown";
-		for($i = 2; $i < count($error['_backtrace'][$i]); ++$i) {
-			$msg = CMError::GenerateErrorMessage($error['_backtrace'][$i]);
-			$r .= "\n  " . substr($msg, strpos($msg, 'thrown') + 7);
+			$r .= "\n  Reason: $error[_reason]";
+			
+		foreach($error as $k => $v) {
+			if(substr($k, 0, 1) == '_')
+				continue;
+			$r .= "\n  '$k' => $v";
 		}
-		return $r;
+		
+		$r .= "\n  Back Trace:";
+		$j = 1;
+		for($i = count($error['_backtrace']) - 1; $i >= 2; --$i) {
+			$msg = CMError::GenerateErrorMessage($error['_backtrace'][$i]);
+			$r .= "\n    $j. " . substr($msg, strpos($msg, 'from') + 5);
+			++$j;
+		}
+		return "$r\n</pre>";
 	}
 	
 	/**
