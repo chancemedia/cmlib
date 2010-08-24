@@ -31,22 +31,23 @@ function createAjaxHandle() {
 	return xmlHttp;
 }
 
-function submitAjaxForm(form, url) {
+function submitAjaxForm(form, url, successAction) {
 	var objs = [];
 	for(var i = 0; i < form.elements.length; ++i)
 		objs[form.elements[i].name] = form.elements[i].value;
-	return submitAjax(url, objs);
+	return submitAjax(url, objs, successAction);
 }
 
-function submitAjax(url, data) {
+function submitAjax(url, data, successAction) {
 	// make sure we always use a new handle, less efficient but much safer if multiple
 	// requests/results happen at once
 	var ajaxHandle = createAjaxHandle();
 	
 	// setup listener
 	ajaxHandle.onreadystatechange = function() {
-		if(ajaxHandle.readyState == 4)
-			alert(ajaxHandle.responseText);
+		if(ajaxHandle.readyState == 4) {
+			successAction();
+		}
 	}
 	
 	// submit request
