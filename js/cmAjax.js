@@ -5,7 +5,7 @@
  * 
  * @return New AJAX handle or false on error.
  */
-function createAjaxHandle() {
+function cmAjaxCreateHandle() {
 	var xmlHttp;
 	
 	try {
@@ -31,23 +31,22 @@ function createAjaxHandle() {
 	return xmlHttp;
 }
 
-function submitAjaxForm(form, url, successAction) {
+function cmAjaxSubmitForm(form, url, successAction) {
 	var objs = [];
 	for(var i = 0; i < form.elements.length; ++i)
 		objs[form.elements[i].name] = form.elements[i].value;
-	return submitAjax(url, objs, successAction);
+	return cmAjaxSubmit(url, objs, successAction);
 }
 
-function submitAjax(url, data, successAction) {
+function cmAjaxSubmit(url, data, successAction) {
 	// make sure we always use a new handle, less efficient but much safer if multiple
 	// requests/results happen at once
-	var ajaxHandle = createAjaxHandle();
+	var ajaxHandle = cmAjaxCreateHandle();
 	
 	// setup listener
 	ajaxHandle.onreadystatechange = function() {
-		if(ajaxHandle.readyState == 4) {
+		if(ajaxHandle.readyState == 4)
 			successAction();
-		}
 	}
 	
 	// submit request
