@@ -17,3 +17,12 @@ function cmSerializeRemove(objname, id) {
 	json.splice(id, 1);
 	document.getElementById(objname).value = JSON.stringify(json);
 }
+
+function cmSerializeRemoveByID(objname, id) {
+	var json = eval(document.getElementById(objname).value);
+	for(var i = 0; i < json.length; ++i) {
+		if(json[i].id == id)
+			json.splice(i, 1);
+	}
+	document.getElementById(objname).value = JSON.stringify(json);
+}

@@ -4,9 +4,12 @@ function cmTableTotalRows(tableName) {
 	return document.getElementById(tableName).rows.length;
 }
 
-function cmTableAddRow(tableName, cells) {
+function cmTableAddRow(tableName, cells, attr) {
 	var table = document.getElementById(tableName);
 	var row = table.insertRow(table.rows.length);
+	
+	if(attr.tr_id != null)
+		row.id = attr.tr_id;
 	
 	for(var i = 0; i < cells.length; ++i) {
 		var cell = row.insertCell(i);
@@ -16,4 +19,11 @@ function cmTableAddRow(tableName, cells) {
 
 function cmTableRemoveRowAtIndex(tableName, rowID) {
 	document.getElementById(tableName).deleteRow(rowID);
+}
+
+function cmTableRemoveRowByID(tableName, rowID) {
+	for(var i = 0; i < document.getElementById(tableName).rows.length; ++i) {
+		if(document.getElementById(tableName).rows[i].id == rowID)
+			document.getElementById(tableName).deleteRow(i);
+	}
 }
