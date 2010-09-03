@@ -49,6 +49,10 @@ class CMHTML implements CMClass {
 		// create the <table> tag
 		$r = CMHTML::BuildTag('table', 'table.', $a);
 		
+		// make sure we have data
+		if(!isset($a['data']))
+			$a['data'] = array();
+		
 		// find the maximum amount of columns
 		$cols = 1;
 		if(is_array($a['data'])) {
