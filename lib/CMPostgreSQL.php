@@ -825,13 +825,14 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		$sql = "UPDATE " . $this->escapeEntity($tableName) . " SET ";
 		$first = true;
 		foreach($newvalues as $k => $v) {
-			if(!$first) $sql .= ",";
+			if(!$first)
+				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
 			if($v instanceof CMConstant)
 				$sql .= "$k=$v";
 			else
-				$sql .= $this->castSafeValue($v, $desc[$k]);
+				$sql .= "$k=" . $this->castSafeValue($v, $desc[$k]);
 			
 			$first = false;
 		}
@@ -841,7 +842,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$sql .= " WHERE ";
 			$first = true;
 			foreach($criteria as $k => $v) {
-				if(!$first) $sql .= " AND ";
+				if(!$first)
+					$sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
 				if($v instanceof CMConstant)
