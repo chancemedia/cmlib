@@ -752,6 +752,24 @@ class CMDataModel extends CMError implements CMClass {
 	}
 	
 	/**
+	 * @brief Render a file uploader box.
+	 * 
+	 * This function is an alias of CMForm::FileBox with the only difference being that the the HTML
+	 * object value is supplied from the pool.
+	 * 
+	 * @note If $a['name'] or $a['value'] is provided it will be replaced before rendering the
+	 *       object.
+	 * 
+	 * @param $name The name of the text box that also determines the pool and variable of where the
+	 *        data comes from.
+	 * @param $a The options to be passed directly to CMForm.
+	 */
+	public function fileBox($name = 'fileupload', $a = false) {
+		list($a['name'], $a['value']) = $this->extractNameValue($name, $a);
+		return CMForm::FileBox($a);
+	}
+	
+	/**
 	 * @brief Render a password box.
 	 * 
 	 * This function is an alias of CMForm::PasswordBox with the only difference being that the the HTML

@@ -61,7 +61,9 @@ class CMForm implements CMClass {
 		if(is_array($value)) {
 			foreach($value as $k => $v)
 				$value[$k] = CMForm::StripSlashesRecursive($v);
-		} else $value = stripslashes($value);
+		}
+		else
+			$value = stripslashes($value);
 		
 		return $value;
 	}
@@ -159,7 +161,8 @@ class CMForm implements CMClass {
 			if(!isset($a[$k])) {
 				if(substr($v, 0, 1) == '$')
 					$a[$k] = $a[substr($v, 1)];
-				else $a[$k] = $v;
+				else
+					$a[$k] = $v;
 			}
 		}
 		
@@ -198,31 +201,54 @@ class CMForm implements CMClass {
 	private static function MainAttributes($a, $checkbox = false) {
 		if($checkbox)
 			$html = " name=\"$a[name][]\"";
-		else $html = " name=\"$a[name]\"";
+		else
+			$html = " name=\"$a[name]\"";
 		$html .= " id=\"$a[id]\"";
-		if($a['class']) $html .= " class=\"$a[class]\"";
 		
-		if($a['onblur']) $html .= " onblur=\"$a[onblur]\"";
-		if($a['onchange']) $html .= " onchange=\"$a[onchange]\"";
-		if($a['onclick']) $html .= " onclick=\"$a[onclick]\"";
-		if($a['ondblclick']) $html .= " ondblclick=\"$a[ondblclick]\"";
-		if($a['onfocus']) $html .= " onfocus=\"$a[onfocus]\"";
-		if($a['onkeydown']) $html .= " onkeydown=\"$a[onkeydown]\"";
-		if($a['onkeypress']) $html .= " onkeypress=\"$a[onkeypress]\"";
-		if($a['onkeyup']) $html .= " onkeyup=\"$a[onkeyup]\"";
-		if($a['onmousedown']) $html .= " onmousedown=\"$a[onmousedown]\"";
-		if($a['onmouseout']) $html .= " onmouseout=\"$a[onmouseout]\"";
-		if($a['onmousemove']) $html .= " onmousemove=\"$a[onmousemove]\"";
-		if($a['onmouseup']) $html .= " onchange=\"$a[onmouseup]\"";
-		if($a['onmouseover']) $html .= " onmouseover=\"$a[onmouseover]\"";
-		if($a['onselect']) $html .= " onselect=\"$a[onselect]\"";
+		if($a['class'])
+			$html .= " class=\"$a[class]\"";
 		
-		if($a['style']) $html .= " style=\"$a[style]\"";
-		if($a['disabled']) $html .= " disabled=\"disabled\"";
-		if($a['readonly']) $html .= " readonly=\"readonly\"";
-		if($a['label']) $html .= " label=\"$a[label]\"";
-		if($a['tabindex']) $html .= " tabindex=\"$a[tabindex]\"";
-		if($a['custom']) $html .= " $a[custom]";
+		if($a['onblur']) 
+			$html .= " onblur=\"$a[onblur]\"";
+		if($a['onchange']) 
+			$html .= " onchange=\"$a[onchange]\"";
+		if($a['onclick']) 
+			$html .= " onclick=\"$a[onclick]\"";
+		if($a['ondblclick']) 
+			$html .= " ondblclick=\"$a[ondblclick]\"";
+		if($a['onfocus']) 
+			$html .= " onfocus=\"$a[onfocus]\"";
+		if($a['onkeydown']) 
+			$html .= " onkeydown=\"$a[onkeydown]\"";
+		if($a['onkeypress']) 
+			$html .= " onkeypress=\"$a[onkeypress]\"";
+		if($a['onkeyup']) 
+			$html .= " onkeyup=\"$a[onkeyup]\"";
+		if($a['onmousedown']) 
+			$html .= " onmousedown=\"$a[onmousedown]\"";
+		if($a['onmouseout']) 
+			$html .= " onmouseout=\"$a[onmouseout]\"";
+		if($a['onmousemove']) 
+			$html .= " onmousemove=\"$a[onmousemove]\"";
+		if($a['onmouseup']) 
+			$html .= " onchange=\"$a[onmouseup]\"";
+		if($a['onmouseover']) 
+			$html .= " onmouseover=\"$a[onmouseover]\"";
+		if($a['onselect']) 
+			$html .= " onselect=\"$a[onselect]\"";
+		
+		if($a['style']) 
+			$html .= " style=\"$a[style]\"";
+		if($a['disabled']) 
+			$html .= " disabled=\"disabled\"";
+		if($a['readonly']) 
+			$html .= " readonly=\"readonly\"";
+		if($a['label']) 
+			$html .= " label=\"$a[label]\"";
+		if($a['tabindex']) 
+			$html .= " tabindex=\"$a[tabindex]\"";
+		if($a['custom']) 
+			$html .= " $a[custom]";
 		
 		return $html;
 	}
@@ -368,11 +394,13 @@ class CMForm implements CMClass {
 				if(!is_array($d))
 					$d = array($d, $d);
 				$html .= '<option value="' . $d[0] . '"';
-				if($d[0] == $a['value']) $html .= ' selected';
+				if($d[0] == $a['value'])
+					$html .= ' selected';
 				$html .= '>';
 				if($a['html'] === false)
 					$html .= htmlspecialchars($d[1]);
-				else $html .= $d[1];
+				else
+					$html .= $d[1];
 				$html .= '</option>';
 			}
 		}
@@ -412,11 +440,13 @@ class CMForm implements CMClass {
 		$html = "<select " . CMForm::MainAttributes($a) . ' size="' . $a['height'] . '">';
 		foreach($a['data'] as $value => $text) {
 			$html .= '<option value="' . $value . '"';
-			if($value == $a['value']) $html .= ' selected';
+			if($value == $a['value'])
+				$html .= ' selected';
 			$html .= '>';
 			if($a['html'] === false)
 				$html .= htmlspecialchars($text);
-			else $html .= $text;
+			else
+				$html .= $text;
 			$html .= '</option>';
 		}
 		$html .= "</select>";
@@ -433,11 +463,13 @@ class CMForm implements CMClass {
 		$html = "";
 		foreach($a['data'] as $value => $text) {
 			$html .= '<input type="radio" value="' . $value . '"';
-			if($value == $a['value']) $html .= ' checked';
+			if($value == $a['value'])
+				$html .= ' checked';
 			$html .= CMForm::MainAttributes($a) . ' />';
 			if($a['html'] === false)
 				$html .= htmlspecialchars($text);
-			else $html .= $text;
+			else
+				$html .= $text;
 			$html .= '&nbsp;';
 		}
 		return $html;
@@ -455,11 +487,13 @@ class CMForm implements CMClass {
 			$html .= '<input type="checkbox" value="' . $value . '"';
 			if(is_array($a['value']) && in_array($value, $a['value']))
 				 $html .= ' checked';
-			elseif($value == $a['value']) $html .= ' checked';
+			elseif($value == $a['value'])
+				$html .= ' checked';
 			$html .= CMForm::MainAttributes($a, true) . ' />';
 			if($a['html'] === false)
 				$html .= htmlspecialchars($text);
-			else $html .= $text;
+			else
+				$html .= $text;
 			$html .= '&nbsp;';
 		}
 		return $html;
@@ -484,9 +518,45 @@ class CMForm implements CMClass {
 		$html = "<textarea" . CMForm::MainAttributes($a) . " rows=\"$a[height]\" cols=\"$a[width]\" wrap=\"$a[wrap]\">";
 		if($a['html'] === false)
 			$html .= htmlspecialchars($a['value']);
-		else $html .= $a['value'];
+		else
+			$html .= $a['value'];
 		$html .= "</textarea>";
 		return $html;
+	}
+	
+	/**
+	 * @brief File upload box.
+	 * 
+	 * @param $a An associative array of options.
+	 * @return HTML object.
+	 */
+	public static function FileBox($a) {
+		$a = CMForm::DefaultAttributes($a);
+		if($a['caption']) {
+			if($a['value'] == '')
+				$a['value'] = $a['captionempty'];
+			return $a['value'] . '&nbsp;';
+		}
+		$html = "<input type='file'" . CMForm::MainAttributes($a);
+		$html .= ' value="' . $a['value'] . '"';
+		$html .= " />";
+		return $html;
+	}
+	
+	public static function CatchUpload($name = 'upload') {
+		return @$_FILES[$name]['tmp_name'] != '';
+	}
+	
+	public static function SaveUploadFile($destination, $name = 'upload') {
+		return move_uploaded_file($_FILES[$name]['tmp_name'], $destination);
+	}
+	
+	public static function UploadFileExtension($name = 'upload') {
+		$r = $_FILES[$name]['name'];
+		$pos = strpos($r, '.');
+		if($pos === false)
+			return "";
+		return strtolower(substr($r, $pos + 1));
 	}
 	
 	/**
