@@ -1,3 +1,48 @@
+AIM = {
+ 
+	frame : function(c) {
+		var n = 'f' + Math.floor(Math.random() * 99999);
+		var d = document.createElement('DIV');
+		d.innerHTML = '<iframe style="display: none" src="about:blank" id="'+n+'" name="'+n+'" onload="AIM.loaded(\''+n+'\')"></iframe>';
+		document.body.appendChild(d);
+ 
+		var i = document.getElementById(n);
+		if (c && typeof(c.onComplete) == 'function')
+			i.onComplete = c.onComplete;
+ 
+		return n;
+	},
+ 
+	form : function(f, name) {
+		f.setAttribute('target', name);
+	},
+ 
+	submit : function(f, c) {
+		AIM.form(f, AIM.frame(c));
+		if (c && typeof(c.onStart) == 'function')
+			return c.onStart();
+		else
+			return true;
+	},
+ 
+	loaded : function(id) {
+		var i = document.getElementById(id);
+		if (i.contentDocument)
+			var d = i.contentDocument;
+		else if (i.contentWindow)
+			var d = i.contentWindow.document;
+		else
+			var d = window.frames[id].document;
+			
+		if (d.location.href == "about:blank")
+			return;
+ 
+		if (typeof(i.onComplete) == 'function')
+			i.onComplete(d.body.innerHTML);
+	}
+ 
+}
+
 /**
  * @brief Create AJAX handle.
  * 
@@ -56,4 +101,14 @@ function cmAjaxSubmit(url, data, successAction) {
 	for(key in data)
 		post.push(key + "=" + escape(data[key]));
 	ajaxHandle.send(post.join('&'));
+}
+
+/**
+ * @brief Upload a file without submitting the form.
+ *
+ * @param before A function to run before the upload start
+ * @Param after A function to run after the upload is complete.
+ */
+function cmAjaxUploadFile(theForm, before, after) {
+	return AIM.submit(theForm, { 'onStart' : before, 'onComplete' : after });
 }
