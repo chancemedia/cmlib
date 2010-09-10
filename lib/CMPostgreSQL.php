@@ -525,6 +525,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$value = NULL;
 		if(in_array($type, array('date', 'time')) && trim($value) == '')
 			$value = NULL;
+		if(substr($type, 0, 3) == 'int' && trim($value) == '')
+			$value = NULL;
 		
 		if($value === NULL)
 			return "NULL";
@@ -571,7 +573,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$first = false;
 		}
 		
-		if($this->query("$sql)")->success())
+		if($this->query("$sql)", false, $a)->success())
 			return $this->query("select lastval()", false, $a)->fetch('cell');
 		return 0;
 	}
