@@ -525,8 +525,21 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$value = NULL;
 		if(in_array($type, array('date', 'time')) && trim($value) == '')
 			$value = NULL;
+			
+		// numerical types
 		if(substr($type, 0, 3) == 'int' && trim($value) == '')
 			$value = NULL;
+			
+		// array types
+		if($type == 'ARRAY') {
+			if(is_array($value))
+				return "'{" . implode(",", $value) . "}'";
+			else if(@substr($value, 0, 1) == '{')
+				// we will assume this is the string form of the array
+				return "'$value'";
+			
+			return NULL;
+		}
 		
 		if($value === NULL)
 			return "NULL";
@@ -1172,6 +1185,13 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	 */
 	public function escapeEntity($str) {
 		return "\"$str\"";
+	}
+	
+	public static function Arrayify($data) {
+		if(@substr($data, 0, 1) != '{')
+			return NULL;
+		
+		return explode(",", substr($data, 1, strlen($data) - 2));
 	}
 	
 }
