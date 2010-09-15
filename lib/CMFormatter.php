@@ -162,7 +162,7 @@ class CMFormatter implements CMClass {
 						if($v < pow($t['unit'], $i)) {
 							$v /= pow($t['unit'], $i - 1);
 							$v = round($v, $t['prec'] + 1);
-							$t['post'] = $p[$i - 1] . $t['post'];
+							$t['post'] = @$p[$i - 1] . $t['post'];
 							$found = true;
 							break;
 						}
