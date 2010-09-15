@@ -21,6 +21,24 @@ class CMGraphic implements CMFile {
 	}
 	
 	/**
+	 * @brief Get the height (in pixels) of a file.
+	 * @return An integer on success or \false if there was an error.
+	 */
+	public static function ImageHeight($file) {
+		$dimentions = getimagesize($file);
+		return $dimentions[1];
+	}
+	
+	/**
+	 * @brief Get the width (in pixels) of a file.
+	 * @return An integer on success or \false if there was an error.
+	 */
+	public static function ImageWidth($file) {
+		$dimentions = getimagesize($file);
+		return $dimentions[0];
+	}
+	
+	/**
 	 * @brief Get the height (in pixels) of the image.
 	 * @return An integer on success or \false if there was an error.
 	 */
