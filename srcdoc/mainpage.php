@@ -23,7 +23,7 @@
  * $ cd cmlib/test
  * $ php testall.php
  * ...
- * All Done: 82 passed, 0 skipped, 0 failed
+ * All Done: 93 passed, 0 skipped, 0 failed
  * </pre>
  * 
  * 
