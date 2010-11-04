@@ -63,8 +63,8 @@ v1.3b</pre>
  * 4. Run <tt>scripts/doxygen.php</tt> to make sure there are no Doxygen warnings or errors.
  * 3. Clean commit on master branch.
  * 5. Run <tt>scripts/doc.php</tt> to generate and upload documentation.
- * 6. Create version tag on master branch and gh-pages branch.
- * 7. <tt>git push</tt> tags.
+ * 6. Create version tag on master and gh-pages branches.
+ * 7. <tt>git push --tags</tt>
  * 
  */
 

@@ -8,7 +8,7 @@
  * -# \ref manual_about_version_1_0a2
  * 
  * 
- * @section manual_about_version_1_0a1 v1.0a1 (28112d16dfd93318361ce95fdd15c1e3e6c81fd0)
+ * @section manual_about_version_1_0a1 v1.0a1
  * First release, includes stand out classes:
  * <ul>
  *   <li>CMConstant</li>
