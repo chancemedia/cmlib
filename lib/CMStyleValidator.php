@@ -1,6 +1,6 @@
 <?php
 
-include_once('CMObject.php');
+include_once('CMClass.php');
 
 /**
  * @brief This is used in conjuction with CMStyle to validate CSS styles.

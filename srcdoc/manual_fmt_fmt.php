@@ -66,6 +66,12 @@
  *     <td>Fixed precision. The value to provide is the number of decimal places to be fixed to. For example 3.4 fixed to 3 decimal places is 3.400</td>
  *   </tr>
  *   <tr>
+ *     <td><tt>'html'</tt></td>
+ *     <td><tt>boolean</tt></td>
+ *     <td><tt>false</tt></td>
+ *     <td>If this option is set to \true the formatter will escape the result so that it is safe to use in HTML.</td>
+ *   </tr>
+ *   <tr>
  *     <td><tt>'mul'</tt></td>
  *     <td><tt>number</tt></td>
  *     <td><tt>1.0</tt></td>

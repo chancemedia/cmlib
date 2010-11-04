@@ -27,6 +27,7 @@ class CMFormatter implements CMClass {
 				'date' => '',
 				'dec' => '.',
 				'fixed' => false,
+				'html' => false,
 				'mul' => 1.0,
 				'post' => '',
 				'pre' => '',
@@ -50,7 +51,9 @@ class CMFormatter implements CMClass {
 		if(is_array($type)) {
 			foreach($type as $k => $v)
 				$this->format[$k] = CMFormatter::InitFormatter($v, $format);
-		} else $this->format[0] = CMFormatter::InitFormatter($type, $format);
+		}
+		else
+			$this->format[0] = CMFormatter::InitFormatter($type, $format);
 	}
 	
 	/**
@@ -72,7 +75,8 @@ class CMFormatter implements CMClass {
 				$pos = strpos($p, '=');
 				if($pos === false)
 					$r['date'] = $p;
-				else $r[substr($p, 0, $pos)] = substr($p, $pos + 1);
+				else
+					$r[substr($p, 0, $pos)] = substr($p, $pos + 1);
 			}
 			
 			return $r;
@@ -85,7 +89,9 @@ class CMFormatter implements CMClass {
 		if(is_array($format)) {
 			foreach($format as $k => $v)
 				$r[$k] = $v;
-		} else $r['date'] = $format;
+		}
+		else
+			$r['date'] = $format;
 		
 		return $r;
 	}
@@ -116,7 +122,6 @@ class CMFormatter implements CMClass {
 		
 		$r = array();
 		foreach($data as $k => $v) {
-			
 			// if the field given has no formatter, then we can passthru
 			if(!isset($this->format[$k])) {
 				$r[$k] = $v;
@@ -145,7 +150,8 @@ class CMFormatter implements CMClass {
 				if($t['fixed'] !== false) {
 					if($t['type'] == 'bytes')
 						$t['prec'] = $t['fixed'] = max($t['prec'], $t['fixed']);
-					else $t['prec'] = $t['fixed'] = min($t['prec'], $t['fixed']);
+					else
+						$t['prec'] = $t['fixed'] = min($t['prec'], $t['fixed']);
 				}
 				
 				// mul
@@ -182,7 +188,8 @@ class CMFormatter implements CMClass {
 						$t['fixed'] = 0;
 					else if(strpos($v, '.') !== false)
 						$t['fixed'] = strlen($v) - strpos($v, '.') - 2;
-					else $t['fixed'] = 0;
+					else
+						$t['fixed'] = 0;
 				}
 				
 				// the rest
@@ -202,12 +209,29 @@ class CMFormatter implements CMClass {
 				$r[$k] = $v;
 				continue;
 			}
-			
 		}
+		
+		// HTML escape
+		if($r['html'])
+			$r = $this->escapeHTML($r);
 		
 		if($returnArray)
 			return $r;
 		return $r[0];
+	}
+	
+	/**
+	 * @brief Internal method for preparing output safe for HTML.
+	 * @param $in Scalar or array.
+	 */
+	public function escapeHTML($in) {
+		if(is_array($in)) {
+			foreach($in as $k => $v)
+				$in[$k] = $this->escapeHTML($v);
+			return $in;
+		}
+		
+		return htmlspecialchars($in);
 	}
 	
 	/**
