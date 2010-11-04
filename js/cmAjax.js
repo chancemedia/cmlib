@@ -76,6 +76,16 @@ function cmAjaxCreateHandle() {
 	return xmlHttp;
 }
 
+/**
+ * @brief Submit an AJAX form.
+ * 
+ * This takes all the objects in the \p form and passes that to cmAjaxSubmit().
+ * 
+ * @param form A form object.
+ * @param url The URL to submit to.
+ * @param successAction An anonymous function to be executed when the request completed.
+ * @returns The result returned by cmAjaxSubmit().
+ */
 function cmAjaxSubmitForm(form, url, successAction) {
 	var objs = [];
 	for(var i = 0; i < form.elements.length; ++i)
@@ -83,6 +93,16 @@ function cmAjaxSubmitForm(form, url, successAction) {
 	return cmAjaxSubmit(url, objs, successAction);
 }
 
+/**
+ * @brief POST data to a URL without submitting the page.
+ * 
+ * This is probably the most key AJAX method that POSTs data to a server and performs an
+ * action on completion.
+ * 
+ * @param url The URL to POST the data to.
+ * @param data An associative array of data.
+ * @param successAction An anonymous function to be performed when the server returns the result.
+ */
 function cmAjaxSubmit(url, data, successAction) {
 	// make sure we always use a new handle, less efficient but much safer if multiple
 	// requests/results happen at once
