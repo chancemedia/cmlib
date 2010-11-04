@@ -406,8 +406,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		}
 		
 		// suppress isset warnings and set defaults
-		if(!isset($v['host']))
-			$v['host'] = 'localhost';
+		if(!isset($v['host']) || $v['host'] == 'localhost')
+			$v['host'] = '';
 		if(!isset($v['port']))
 			$v['port'] = 5432;
 		if(!isset($v['db']))
@@ -418,7 +418,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$v['pass'] = '';
 		
 		// attempt to connect
-		$this->dbh = @pg_connect("host={$v['host']} port={$v['port']} dbname={$v['db']} user={$v['user']} password={$v['pass']}");
+		$connect_string = "host='{$v['host']}' port='{$v['port']}' dbname='{$v['db']}' user='{$v['user']}' password='{$v['pass']}'";
+		$this->dbh = @pg_connect($connect_string);
 		if(!$this->dbh) {
 			$this->throwError("Could not connect to database.");
 			return $this;
