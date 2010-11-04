@@ -543,14 +543,54 @@ class CMForm implements CMClass {
 		return $html;
 	}
 	
+	/**
+	 * @brief Return \true if a file si ready to be uploaded.
+	 * 
+	 * You can use this function with AJAX or normal HTML submitted forms. An example might be a
+	 * page that submits to <tt>imageupload.php</tt>:
+	 * 
+	 * @code
+	 * <?php
+	 * if(CMForm::CatchUpload()) {
+	 *   // there is a file being uploaded that we need to store
+	 *   // first check that it is a safe type
+	 *   if(!in_array(CMForm::UploadFileExtension(), array('jpg', 'gif', 'png'))
+	 *     die("You uploaded an invalid image type!");
+	 *   
+	 *   $destination = 'upload/' . substr(md5(rand()), 24) . CMForm::UploadFileExtension();
+	 *   CMForm::SaveUploadFile($destination);
+	 *  
+	 *   // the uploaded file will now be at a location like 'upload/34fde610.jpg'
+	 * }
+	 * ?>
+	 * @endcode
+	 * 
+	 * @param $name The name of the HTML upload field. This defaults to 'upload' if not given.
+	 */
 	public static function CatchUpload($name = 'upload') {
 		return @$_FILES[$name]['tmp_name'] != '';
 	}
 	
+	/**
+	 * @brief Move an temp uploaded file to a perminant location.
+	 * 
+	 * See CatchUpload() for example.
+	 * 
+	 * @param $destination The file desintation (the path where you want the upload file to be saved.)
+	 * @param $name The name of the HTML upload field. This defaults to 'upload' if not given.
+	 */
 	public static function SaveUploadFile($destination, $name = 'upload') {
 		return move_uploaded_file($_FILES[$name]['tmp_name'], $destination);
 	}
 	
+	/**
+	 * @brief Return the extension of the uploaded file (not including the dot.)
+	 * 
+	 * If the uploaded file was <tt>'something.jpg'</tt> then UploadFileExtension() would return
+	 * <tt>jpg</tt>
+	 * 
+	 * @param $name The name of the HTML upload field. This defaults to 'upload' if not given.
+	 */
 	public static function UploadFileExtension($name = 'upload') {
 		$r = $_FILES[$name]['name'];
 		$pos = strpos($r, '.');

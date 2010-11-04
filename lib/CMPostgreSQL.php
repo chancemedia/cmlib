@@ -514,6 +514,8 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	 *
 	 * PostgreSQL is very strict with its typing, this will make sure the SQL type matches the type PostgreSQL wants.
 	 *
+	 * @param $value Value to make safe.
+	 * @param $col Associative array of column information.
 	 * @return Escapes type-safe value.
 	 */
 	private function castSafeValue($value, $col) {
@@ -1189,6 +1191,10 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		return "\"$str\"";
 	}
 	
+	/**
+	 * @brief Translate a SQL ARRAY into a PHP array.
+	 * @param $data A string in a PostgreSQL ARRAY format like '{1,2,3}'.
+	 */
 	public static function Arrayify($data) {
 		if(@substr($data, 0, 1) != '{')
 			return NULL;

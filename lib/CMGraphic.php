@@ -22,6 +22,7 @@ class CMGraphic implements CMFile {
 	
 	/**
 	 * @brief Get the height (in pixels) of a file.
+	 * @param $file The path of the file.
 	 * @return An integer on success or \false if there was an error.
 	 */
 	public static function ImageHeight($file) {
@@ -31,6 +32,7 @@ class CMGraphic implements CMFile {
 	
 	/**
 	 * @brief Get the width (in pixels) of a file.
+	 * @param $file The path of the file.
 	 * @return An integer on success or \false if there was an error.
 	 */
 	public static function ImageWidth($file) {

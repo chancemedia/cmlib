@@ -67,8 +67,7 @@
  * @endcode
  * 
  * You can get more information about each method by looking at the specific documentation, for example
- * CMMySQL::totalRows(). Or, for a more technical approach you can see which classes conform to
- * the protocols at \ref cmdatabaseprotocol_driver.
+ * CMMySQL::totalRows().
  * 
  */
 
