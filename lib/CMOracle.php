@@ -607,31 +607,23 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief Fetch the list of tables in the active database.
 	 * 
-	 * @notimp
-	 * 
-	 * @param $schema Schema name.
-	 * @return Always \false.
+	 * @param $schema Not supported.
 	 */
 	public function getTableNames($schema = false) {
-		return false;
+		return $this->query('select table_name from user_tables')->fetchAll('line', 'vertical');
 	}
 	
 	/**
-	 * @brief Returns true or false for the selected database.
-	 * 
-	 * @notimp
+	 * @brief Returns \true or \false for the active database.
 	 * 
 	 * @param $table The name of the table.
-	 * @return Always \false.
 	 */
 	public function tableExists($table) {
-		return false;
+		return in_array($table, $this->getTableNames());
 	}
 	
 	/**
 	 * @brief Not supported.
-	 * 
-	 * @notimp
 	 * 
 	 * @return Always \false.
 	 */
@@ -641,8 +633,6 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 
 	/**
 	 * @brief Not supported.
-	 * 
-	 * @notimp
 	 * 
 	 * @return Always \false.
 	 */
