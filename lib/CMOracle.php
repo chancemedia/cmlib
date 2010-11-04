@@ -562,7 +562,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	/**
 	 * @brief \c INSERT statement
 	 * 
-	 * @warning Unlink the other protocols, this function will only return the success of the query
+	 * @warning Unlike the other protocols, this function will only return the success of the query
 	 *          and not the newly created key.
 	 * 
 	 * This uses a key-value paired array to construct an \c INSERT statement like:
@@ -576,7 +576,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	 * insert into mytable (a, b) values ('Something', '123.45')
 	 * @endcode
 	 * 
-	 * @throwsWarning If the query failed. 'sql' attribute contains the original SQL.
+	 * @throws Warning If the query failed. 'sql' attribute contains the original SQL.
 	 * 
 	 * @param $name The name of the table.
 	 * @param $kv Associative array of fields and data.
