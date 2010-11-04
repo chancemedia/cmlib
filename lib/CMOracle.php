@@ -417,9 +417,9 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 	 * $dbh = new CMOracle("oracle://scott:tiger@localhost/orcl");
 	 * @endcode
 	 * 
-	 * @throwsError If the schema is invalid. Only \c 'oracle' is supported.
+	 * @throws Error If the schema is invalid. Only \c 'oracle' is supported.
 	 * 
-	 * @throwsError If the connection was unsuccessful.
+	 * @throws Error If the connection was unsuccessful.
 	 * 
 	 * @param $uri Connection URI.
 	 * @param $a An associative array of server options when connecting.
