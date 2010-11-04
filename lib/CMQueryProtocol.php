@@ -101,6 +101,10 @@ interface CMQueryProtocol extends CMClass {
 	 * 				<td>Non-associative array.</td>
 	 * 			</tr>
 	 * 			<tr>
+	 * 				<td><tt>'row'</tt></td>
+	 * 				<td>Associative and non-associative array.</td>
+	 * 			</tr>
+	 * 			<tr>
 	 * 				<td><tt>'pair'</tt></td>
 	 * 				<td>First and second column become key-value.</td>
 	 * 			</tr>
