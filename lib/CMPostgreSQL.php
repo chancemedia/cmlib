@@ -4,6 +4,7 @@ include_once("CMDatabaseProtocol.php");
 include_once("CMPostgreSQLQuery.php");
 include_once("CMConstant.php");
 include_once("CMError.php");
+include_once("CMDecimal.php");
 
 /**
  * @brief PostgreSQL connectivity class.
@@ -474,7 +475,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$new_sql = "";
 			for($i = 0; $i < count($parts) - 1; ++$i) {
 				// if its a CMConstant we don't encapsulate it
-				if($values[$i] instanceof CMConstant)
+				if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
 					$new_sql .= $parts[$i] . $values[$i];
 				else
 					$new_sql .= $parts[$i] . "'" . pg_escape_string($values[$i]) . "'";
@@ -482,7 +483,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
-			if($values instanceof CMConstant)
+			if($values instanceof CMConstant || $values instanceof CMDecimal)
 				$sql = str_replace('?', $values, $sql);
 			else
 				$sql = str_replace('?', "'" . pg_escape_string($values) . "'", $sql);
@@ -579,7 +580,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= $v;
 			else
 				$sql .= $this->castSafeValue($v, $desc[$k]);
@@ -778,7 +779,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 	 * DELETE FROM $tableName WHERE 1;
 	 * @endcode
 	 * 
-	 * @throwsWarning If the query was unsuccessful.
+	 * @throws Warning If the query was unsuccessful.
 	 * 
 	 * @param $tableName The name of the table.
 	 * @return \true for success, otherwise \false (such as if the table doesn't exist or you do not have
@@ -845,7 +846,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= "$k=$v";
 			else
 				$sql .= "$k=" . $this->castSafeValue($v, $desc[$k]);
@@ -862,7 +863,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 					$sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . pg_escape_string($v) . "'";
@@ -906,7 +907,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 				if(!$first) $sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . pg_escape_string($v) . "'";

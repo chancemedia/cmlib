@@ -4,6 +4,7 @@ include_once("CMDatabaseProtocol.php");
 include_once("CMMySQLQuery.php");
 include_once("CMConstant.php");
 include_once("CMError.php");
+include_once("CMDecimal.php");
 
 /**
  * @brief MySQL connectivity class.
@@ -730,7 +731,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			if(!$first) $sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= $v;
 			else
 				$sql .= "'" . mysql_real_escape_string($v) . "'";
@@ -808,7 +809,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			$new_sql = "";
 			for($i = 0; $i < count($parts) - 1; ++$i) {
 				// if its a CMConstant we don't encapsulate it
-				if($values[$i] instanceof CMConstant)
+				if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
 					$new_sql .= $parts[$i] . $values[$i];
 				else {
 					if($this->driver == 'mysqli')
@@ -820,7 +821,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
-			if($values[$i] instanceof CMConstant)
+			if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
 				$sql = str_replace('?', $values, $sql);
 			else {
 				if($this->driver == 'mysqli')
@@ -1615,7 +1616,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			if(!$first) $sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= "$k=$v";
 			else
 				$sql .= "$k='" . mysql_real_escape_string($v) . "'";
@@ -1631,7 +1632,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				if(!$first) $sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . mysql_real_escape_string($v) . "'";
@@ -1697,7 +1698,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 				if(!$first) $sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . mysql_real_escape_string($v) . "'";

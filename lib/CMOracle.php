@@ -4,6 +4,7 @@ include_once("CMDatabaseProtocol.php");
 include_once("CMOracleQuery.php");
 include_once("CMConstant.php");
 include_once("CMError.php");
+include_once("CMDecimal.php");
 
 if(!function_exists("oci_parse")) {
 	function oci_parse($a) {
@@ -541,7 +542,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			$new_sql = "";
 			for($i = 0; $i < count($parts) - 1; ++$i) {
 				// if its a CMConstant we don't encapsulate it
-				if($values[$i] instanceof CMConstant)
+				if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
 					$new_sql .= $parts[$i] . $values[$i];
 				else
 					$new_sql .= $parts[$i] . "'" . str_replace("'", "''", $values[$i]) . "'";
@@ -549,7 +550,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
-			if($values instanceof CMConstant)
+			if($values instanceof CMConstant || $values instanceof CMDecimal)
 				$sql = str_replace('?', $values, $sql);
 			else
 				$sql = str_replace('?', "'" . str_replace("'", "''", $values) . "'", $sql);
@@ -589,7 +590,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				$sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= $v;
 			else
 				$sql .= "'" . str_replace("'", "''", $v) . "'";
@@ -808,7 +809,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 			if(!$first) $sql .= ",";
 			
 			// if its a CMConstant we don't encapsulate it
-			if($v instanceof CMConstant)
+			if($v instanceof CMConstant || $v instanceof CMDecimal)
 				$sql .= "$k=$v";
 			else
 				$sql .= "$k='" . str_replace("'", "''", $v) . "'";
@@ -824,7 +825,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				if(!$first) $sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . str_replace("'", "''", $v) . "'";
@@ -866,7 +867,7 @@ class CMOracle extends CMError implements CMDatabaseProtocol {
 				if(!$first) $sql .= " AND ";
 				
 				// if its a CMConstant we don't encapsulate it
-				if($v instanceof CMConstant)
+				if($v instanceof CMConstant || $v instanceof CMDecimal)
 					$sql .= "$k=$v";
 				else
 					$sql .= "$k='" . str_replace("'", "''", $v) . "'";
