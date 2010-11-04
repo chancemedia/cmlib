@@ -15,7 +15,7 @@
  * 
  * 
  * @section mainpage_testing Testing and Quality Control
- * CMLIB is supplied with a script that performs more than 80 tests to make sure the expected outcomes
+ * CMLIB is supplied with a script that performs many tests to make sure the expected outcomes
  * work on your combination of operating system and PHP version.
  * 
  * You may run this test at time and it is recommnded you run it after install or updating CMLIB:
