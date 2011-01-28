@@ -476,7 +476,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 			for($i = 0; $i < count($parts) - 1; ++$i) {
 				// if its a CMConstant we don't encapsulate it
 				if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
-					$new_sql .= $parts[$i] . $values[$i];
+					$new_sql .= $parts[$i] . ((string) $values[$i]);
 				else
 					$new_sql .= $parts[$i] . "'" . pg_escape_string($values[$i]) . "'";
 			}
@@ -484,7 +484,7 @@ class CMPostgreSQL extends CMError implements CMDatabaseProtocol {
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
 			if($values instanceof CMConstant || $values instanceof CMDecimal)
-				$sql = str_replace('?', $values, $sql);
+				$sql = str_replace('?', (string) $values, $sql);
 			else
 				$sql = str_replace('?', "'" . pg_escape_string($values) . "'", $sql);
 		}

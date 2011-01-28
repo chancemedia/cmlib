@@ -37,15 +37,9 @@ class CMConstant implements CMClass {
 	
 	/**
 	 * @brief Return the string value of this object.
-	 * 
-	 * The $value is converted in a string using the standard PHP rules. Some examples are:
-	 * @code
-	 * "<CMConstant: 12>"
-	 * "<CMConstant: Bob Smith>"
-	 * @endcode
 	 */
 	public function __toString() {
-		return "<" . get_class($this) . ": " . $this->value . ">";
+		return $this->value;
 	}
 	
 }

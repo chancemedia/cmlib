@@ -810,7 +810,7 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			for($i = 0; $i < count($parts) - 1; ++$i) {
 				// if its a CMConstant we don't encapsulate it
 				if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
-					$new_sql .= $parts[$i] . $values[$i];
+					$new_sql .= $parts[$i] . ((string) $values[$i]);
 				else {
 					if($this->driver == 'mysqli')
 						$new_sql .= $parts[$i] . "'" . $this->dbh->real_escape_string($values[$i]) . "'";
@@ -821,8 +821,8 @@ class CMMySQL extends CMError implements CMDatabaseProtocol {
 			$sql = $new_sql . $parts[count($parts) - 1];
 		} elseif($values !== false) {
 			// if its a CMConstant we don't encapsulate it
-			if($values[$i] instanceof CMConstant || $values[$i] instanceof CMDecimal)
-				$sql = str_replace('?', $values, $sql);
+			if($values instanceof CMConstant || $values instanceof CMDecimal)
+				$sql = str_replace('?', (string) $values, $sql);
 			else {
 				if($this->driver == 'mysqli')
 					$sql = str_replace('?', "'" . $this->dbh->real_escape_string($values) . "'", $sql);
